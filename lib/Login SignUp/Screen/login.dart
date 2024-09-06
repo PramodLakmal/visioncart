@@ -102,8 +102,13 @@ class _SignupScreenState extends State<LoginScreen> {
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 25, vertical: 10),
               child: ElevatedButton(
-                style:
-                    ElevatedButton.styleFrom(backgroundColor: Colors.blueGrey),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: const Color.fromARGB(255, 183, 213, 228),
+                  elevation: 5, // Adds shadow effect
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12), // Optional: Rounded corners
+                  ),
+                ),
                 onPressed: () async {
                   await FirebaseServices().signInWithGoogle();
                   Navigator.pushReplacement(
@@ -113,33 +118,37 @@ class _SignupScreenState extends State<LoginScreen> {
                     ),
                   );
                 },
-                child: Row(
-                  children: [
-                    Padding(
-                      padding: const EdgeInsets.symmetric(vertical: 8),
-                      child: Image.network(
-                        "https://ouch-cdn2.icons8.com/VGHyfDgzIiyEwg3RIll1nYupfj653vnEPRLr0AeoJ8g/rs:fit:456:456/czM6Ly9pY29uczgu/b3VjaC1wcm9kLmFz/c2V0cy9wbmcvODg2/LzRjNzU2YThjLTQx/MjgtNGZlZS04MDNl/LTAwMTM0YzEwOTMy/Ny5wbmc.png",
-                        height: 35,
+                child: Center(
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.center, // Centers the icon and text
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.symmetric(vertical: 8),
+                        child: Image.network(
+                          "https://firebasestorage.googleapis.com/v0/b/visioncart-5e1b8.appspot.com/o/Login%20and%20SignUp%2Fpngwing.com.png?alt=media&token=109f22c6-d0ed-4265-a5d3-c5c04ecf7b14",
+                          height: 35,
+                        ),
                       ),
-                    ),
-                    const SizedBox(width: 10),
-                    const Text(
-                      "Continue with Google",
-                      style: TextStyle(
-                        fontWeight: FontWeight.bold,
-                        fontSize: 20,
-                        color: Colors.white,
+                      const SizedBox(width: 10),
+                      const Text(
+                        "Continue with Google",
+                        style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 20,
+                          color: Colors.white,
+                        ),
                       ),
-                    )
-                  ],
+                    ],
+                  ),
                 ),
               ),
             ),
+
            // for phone authentication 
            const PhoneAuthentication(),
             // Don't have an account? got to signup screen
             Padding(
-              padding: const EdgeInsets.only(top: 10, left: 100),
+              padding: const EdgeInsets.only(top: 10),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
@@ -154,7 +163,7 @@ class _SignupScreenState extends State<LoginScreen> {
                     },
                     child: const Text(
                       "SignUp",
-                      style: TextStyle(fontWeight: FontWeight.bold),
+                      style: TextStyle(fontWeight: FontWeight.bold, color: Colors.blue),
                     ),
                   )
                 ],
@@ -172,14 +181,13 @@ class _SignupScreenState extends State<LoginScreen> {
         horizontal: 32,
         vertical: 15,
       ),
-      decoration: BoxDecoration(
-        color: const Color(0xFFedf0f8),
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(
-          color: Colors.black45,
-          width: 2,
-        ),
+      decoration: const BoxDecoration(
+      gradient: LinearGradient(
+      colors: [Colors.blueAccent, Colors.lightBlueAccent],
+      begin: Alignment.topLeft,
+      end: Alignment.bottomRight,
       ),
+  ),
       child: Image.network(
         image,
         height: 40,

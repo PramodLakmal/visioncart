@@ -15,38 +15,43 @@ class _PhoneAuthenticationState extends State<PhoneAuthentication> {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 25, vertical: 10),
-      child: ElevatedButton(
-        style: ElevatedButton.styleFrom(backgroundColor: Colors.green),
-        onPressed: () {
-          // now, we make => when user click on sign in with phone button open the dialog box wehre we enter the phone number,
-          myDialogBox(context);
-        },
-        child: Row(
-          children: [
-            Padding(
-              padding: const EdgeInsets.symmetric(
-                vertical: 10,
+            padding: const EdgeInsets.symmetric(horizontal: 25, vertical: 10),
+            child: ElevatedButton(
+              style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.green,
+                elevation: 5, // Adds a subtle shadow for better UI
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12), // Optional rounded corners
+                ),
               ),
-              child: Image.network(
-                "https://static.vecteezy.com/system/resources/thumbnails/010/829/986/small/phone-icon-in-trendy-flat-style-free-png.png",
-                height: 32,
-                color: Colors.white,
+              onPressed: () {
+                // Open dialog box to enter the phone number
+                myDialogBox(context);
+              },
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center, // Centers the icon and text
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 10),
+                    child: Image.network(
+                      "https://static.vecteezy.com/system/resources/thumbnails/010/829/986/small/phone-icon-in-trendy-flat-style-free-png.png",
+                      height: 32,
+                      color: Colors.white,
+                    ),
+                  ),
+                  const SizedBox(width: 10),
+                  const Text(
+                    "Sign in with Phone",
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 20,
+                      color: Colors.white,
+                    ),
+                  ),
+                ],
               ),
             ),
-            const SizedBox(width: 10),
-            const Text(
-              "Sign in with Phone",
-              style: TextStyle(
-                fontWeight: FontWeight.bold,
-                fontSize: 20,
-                color: Colors.white,
-              ),
-            )
-          ],
-        ),
-      ),
-    );
+          );
   }
 
   void myDialogBox(BuildContext context) {
