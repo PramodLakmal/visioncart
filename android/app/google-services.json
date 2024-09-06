@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "762662243828",
+    "project_id": "visioncart-5e1b8",
+    "storage_bucket": "visioncart-5e1b8.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:762662243828:android:c6a45c980c43bfd7e7bda1",
+        "android_client_info": {
+          "package_name": "com.example.visioncart"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC9O41EwXdOVsZ9EMCFSqn7rEFjPP2eEtU"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
