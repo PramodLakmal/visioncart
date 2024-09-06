@@ -79,7 +79,7 @@ class _SignupScreenState extends State<LoginScreen> {
             TextFieldInput(
               icon: Icons.lock,
               textEditingController: passwordController,
-              hintText: 'Enter your passord',
+              hintText: 'Enter your password',
               textInputType: TextInputType.text,
               isPass: true,
             ),
