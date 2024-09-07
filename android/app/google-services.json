@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "762662243828",
+    "project_id": "visioncart-5e1b8",
+    "storage_bucket": "visioncart-5e1b8.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:762662243828:android:c6a45c980c43bfd7e7bda1",
+        "android_client_info": {
+          "package_name": "com.example.visioncart"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "762662243828-jiker3hpaees3avfd11grdnpi9sv99kh.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.visioncart",
+            "certificate_hash": "d888ef62a7e6e42d826921d84c7ea97451160681"
+          }
+        },
+        {
+          "client_id": "762662243828-etd2t20g3h53aq479g7335eq9hiurp1o.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC9O41EwXdOVsZ9EMCFSqn7rEFjPP2eEtU"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "762662243828-4j3ajc4no2klaaik6rein4mtjujseiac.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
