@@ -28,6 +28,7 @@ class AuthMethod {
           'name': name,
           'uid': cred.user!.uid,
           'email': email,
+          'createdAt': FieldValue.serverTimestamp(),
         });
 
         res = "success";
