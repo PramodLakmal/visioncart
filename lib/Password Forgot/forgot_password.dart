@@ -83,7 +83,7 @@ class _ForgotPasswordState extends State<ForgotPassword> {
                   const SizedBox(height: 20),
                   ElevatedButton(
                     style:
-                        ElevatedButton.styleFrom(backgroundColor: Colors.blue),
+                        ElevatedButton.styleFrom(backgroundColor: const Color.fromRGBO(33, 150, 243, 1)),
                     onPressed: () async {
                       await auth
                           .sendPasswordResetEmail(email: emailController.text)

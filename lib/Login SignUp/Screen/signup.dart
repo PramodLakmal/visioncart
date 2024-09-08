@@ -83,7 +83,7 @@ class _SignupScreenState extends State<SignupScreen> {
             TextFieldInput(
               icon: Icons.lock,
               textEditingController: passwordController,
-              hintText: 'Enter your passord',
+              hintText: 'Enter your password',
               textInputType: TextInputType.text,
               isPass: true,
             ),
@@ -103,7 +103,7 @@ class _SignupScreenState extends State<SignupScreen> {
                   },
                   child: const Text(
                     " Login",
-                    style: TextStyle(fontWeight: FontWeight.bold),
+                    style: TextStyle(fontWeight: FontWeight.bold , color: Colors.blue),
                   ),
                 )
               ],
