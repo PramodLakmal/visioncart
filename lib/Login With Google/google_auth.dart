@@ -41,6 +41,8 @@ class FirebaseServices {
             'email': user.email,
             'uid': user.uid,
             'createdAt': FieldValue.serverTimestamp(),
+            'isAdmin': false,  // Default role is user
+            'isUser': true,    // Assign user role
           });
         }
 
