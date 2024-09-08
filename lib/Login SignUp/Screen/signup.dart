@@ -103,7 +103,7 @@ class _SignupScreenState extends State<SignupScreen> {
                   },
                   child: const Text(
                     " Login",
-                    style: TextStyle(fontWeight: FontWeight.bold),
+                    style: TextStyle(fontWeight: FontWeight.bold , color: Colors.blue),
                   ),
                 )
               ],

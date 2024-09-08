@@ -2,6 +2,8 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
+import 'login.dart';
+
 class EditProfile extends StatefulWidget {
   const EditProfile({super.key});
 
@@ -21,7 +23,7 @@ class _ProfilePageState extends State<EditProfile> {
 
   String profileImageUrl = '';
   // Get current user from Firebase Authentication
-    User? user = FirebaseAuth.instance.currentUser;
+  User? user = FirebaseAuth.instance.currentUser;
 
   @override
   void initState() {
@@ -32,17 +34,31 @@ class _ProfilePageState extends State<EditProfile> {
   Future<void> loadUserData() async {
     User? user = FirebaseAuth.instance.currentUser;
     if (user != null) {
-      DocumentSnapshot userData = await FirebaseFirestore.instance.collection('users').doc(user.uid).get();
-      if (userData.exists) {
-        fullNameController.text = userData['name'] ?? '';
-        usernameController.text = userData['username'] ?? '';
-        telephoneController.text = userData['telephone'] ?? '';
-        addressController.text = userData['address'] ?? '';
-        ageController.text = userData['age'] ?? '';
-        countryController.text = userData['country'] ?? '';
-        postalCodeController.text = userData['postalCode'] ?? '';
-        emailController.text = userData['email'] ?? '';
-        profileImageUrl = userData['profileImageUrl'] ?? '';
+      DocumentSnapshot userData = await FirebaseFirestore.instance
+          .collection('users')
+          .doc(user.uid)
+          .get();
+
+      if (userData.exists && userData.data() != null) {
+        Map<String, dynamic> data =
+            userData.data() as Map<String, dynamic>; // Safely cast to a Map
+        // Use the data only if the field exists, otherwise assign an empty string or default value
+        fullNameController.text = data.containsKey('name') ? data['name'] : '';
+        usernameController.text =
+            data.containsKey('username') ? data['username'] : '';
+        telephoneController.text =
+            data.containsKey('telephone') ? data['telephone'] : '';
+        addressController.text =
+            data.containsKey('address') ? data['address'] : '';
+        ageController.text = data.containsKey('age') ? data['age'] : '';
+        countryController.text =
+            data.containsKey('country') ? data['country'] : '';
+        postalCodeController.text =
+            data.containsKey('postalCode') ? data['postalCode'] : '';
+        // For email, we are fetching it from FirebaseAuth instead of Firestore
+        emailController.text = user.email ?? '';
+        profileImageUrl =
+            data.containsKey('profileImageUrl') ? data['profileImageUrl'] : '';
         setState(() {});
       }
     }
@@ -51,29 +67,63 @@ class _ProfilePageState extends State<EditProfile> {
   Future<void> updateProfile() async {
     User? user = FirebaseAuth.instance.currentUser;
     if (user != null) {
-      await FirebaseFirestore.instance.collection('users').doc(user.uid).update({
+      await FirebaseFirestore.instance
+          .collection('users')
+          .doc(user.uid)
+          .update({
         'name': fullNameController.text,
         'username': usernameController.text,
+        'email': emailController.text,
         'telephone': telephoneController.text,
         'address': addressController.text,
         'age': ageController.text,
         'country': countryController.text,
         'postalCode': postalCodeController.text,
-        'email': emailController.text,
       });
+    }
+  }
+
+  Future<void> deleteUserProfile() async {
+    try {
+      if (user != null) {
+        // Delete user data from Firestore
+        await FirebaseFirestore.instance
+            .collection('users')
+            .doc(user!.uid)
+            .delete();
+
+        // Delete the user from FirebaseAuth
+        await user!.delete();
+
+        // Sign out the user after deletion
+        await FirebaseAuth.instance.signOut();
+
+        // Navigate back to login or another page
+        Navigator.of(context).pushReplacement(
+          MaterialPageRoute(
+              builder: (context) =>
+                  const LoginScreen()), // Ensure you have LoginScreen imported
+        );
+      }
+    } catch (e) {
+      // Handle error, such as when trying to delete the user but re-authentication is required
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Error deleting profile: $e')),
+      );
     }
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: SingleChildScrollView( // Added SingleChildScrollView
+      body: SingleChildScrollView(
+        // Added SingleChildScrollView
         child: Padding(
           padding: const EdgeInsets.all(16.0),
           child: Column(
             children: [
               const SizedBox(height: 20),
-               // Profile picture
+              // Profile picture
               user?.photoURL != null
                   ? CircleAvatar(
                       radius: 50,
@@ -87,26 +137,68 @@ class _ProfilePageState extends State<EditProfile> {
               const SizedBox(height: 20),
               _buildTextField(fullNameController, "Full Name"),
               _buildTextField(usernameController, "Username"),
+              _buildTextField(emailController, "Email"),
               _buildTextField(telephoneController, "Telephone"),
               _buildTextField(addressController, "Address"),
               _buildTextField(ageController, "Age"),
               _buildTextField(countryController, "Country"),
               _buildTextField(postalCodeController, "Postal Code"),
-              _buildTextField(emailController, "Email"),
               const SizedBox(height: 20),
               ElevatedButton(
                 onPressed: () async {
                   await updateProfile();
                   ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(content: Text('Profile updated successfully!')),
+                    const SnackBar(
+                        content: Text('Profile updated successfully!')),
                   );
                 },
                 style: ElevatedButton.styleFrom(
                   backgroundColor: const Color.fromRGBO(33, 150, 243, 1),
-                  padding: const EdgeInsets.symmetric(horizontal: 50, vertical: 15),
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 50, vertical: 15),
                   foregroundColor: Colors.white,
                 ),
                 child: const Text('Update Profile'),
+              ),
+              const SizedBox(height: 20),
+              ElevatedButton(
+                onPressed: () async {
+                  // Ask for confirmation before deleting
+                  bool? confirmDelete = await showDialog(
+                    context: context,
+                    builder: (BuildContext context) {
+                      return AlertDialog(
+                        title: const Text('Delete Profile'),
+                        content: const Text(
+                            'Are you sure you want to delete your profile? This action cannot be undone.'),
+                        actions: [
+                          TextButton(
+                            onPressed: () {
+                              Navigator.of(context).pop(false); // User canceled
+                            },
+                            child: const Text('Cancel'),
+                          ),
+                          TextButton(
+                            onPressed: () {
+                              Navigator.of(context).pop(true); // User confirmed
+                            },
+                            child: const Text('Delete'),
+                          ),
+                        ],
+                      );
+                    },
+                  );
+                  if (confirmDelete == true) {
+                    await deleteUserProfile();
+                  }
+                },
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.red, // Red color for delete button
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 50, vertical: 15),
+                  foregroundColor: Colors.white,
+                ),
+                child: const Text('Delete Profile'),
               ),
             ],
           ),
