@@ -1,9 +1,23 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:visioncart/Login SignUp/Widget/button.dart';
 import '../Services/authentication.dart';
 import '../Widget/snackbar.dart';
 import '../Widget/text_field.dart';
 import 'login.dart';
+
+String? validateEmail(String value) {
+  if (value.isEmpty) {
+    return 'Email cannot be empty';
+  }
+  // A simple regex to check if the email format is correct
+  String pattern = r'^[^@]+@[^@]+\.[^@]+';
+  RegExp regex = RegExp(pattern);
+  if (!regex.hasMatch(value)) {
+    return 'Enter a valid email';
+  }
+  return null;
+}
 
 class SignupScreen extends StatefulWidget {
   const SignupScreen({super.key});
@@ -27,34 +41,55 @@ class _SignupScreenState extends State<SignupScreen> {
   }
 
   void signupUser() async {
-    // set is loading to true.
-    setState(() {
-      isLoading = true;
-    });
-    // signup user using our authmethod
-    String res = await AuthMethod().signupUser(
-        email: emailController.text,
-        password: passwordController.text,
-        name: nameController.text);
-    // if string return is success, user has been creaded and navigate to next screen other witse show error.
-    if (res == "success") {
-      setState(() {
-        isLoading = false;
-      });
-      //navigate to the next screen
-      Navigator.of(context).pushReplacement(
-        MaterialPageRoute(
-          builder: (context) => const LoginScreen(),
-        ),
-      );
-    } else {
-      setState(() {
-        isLoading = false;
-      });
-      // show error
-      showSnackBar(context, res);
-    }
+  // Input validation
+  if (nameController.text.isEmpty) {
+    showSnackBar(context, 'Name cannot be empty');
+    return;
   }
+  if (validateEmail(emailController.text) != null) {
+    showSnackBar(context, validateEmail(emailController.text)!);
+    return;
+  }
+  if (passwordController.text.length < 6) {
+    showSnackBar(context, 'Password must be at least 6 characters');
+    return;
+  }
+
+  setState(() {
+    isLoading = true;
+  });
+
+  String res = await AuthMethod().signupUser(
+      email: emailController.text,
+      password: passwordController.text,
+      name: nameController.text);
+  
+  if (res == "success") {
+    // Get the current user
+    User? user = FirebaseAuth.instance.currentUser;
+
+    // Update user profile
+    if (user != null) {
+      await user.updateProfile(displayName: nameController.text);
+      await user.reload(); // Reload user to update profile information
+    }
+
+    setState(() {
+      isLoading = false;
+    });
+    Navigator.of(context).pushReplacement(
+      MaterialPageRoute(
+        builder: (context) => const LoginScreen(),
+      ),
+    );
+  } else {
+    setState(() {
+      isLoading = false;
+    });
+    showSnackBar(context, res);
+  }
+}
+
 
   @override
   Widget build(BuildContext context) {
@@ -87,7 +122,10 @@ class _SignupScreenState extends State<SignupScreen> {
               textInputType: TextInputType.text,
               isPass: true,
             ),
-            MyButtons(onTap: signupUser, text: "Sign Up"),
+            MyButtons(
+                onTap: signupUser,
+                text: isLoading ? "Loading..." : "Sign Up",
+              ),
             const SizedBox(height: 50),
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
