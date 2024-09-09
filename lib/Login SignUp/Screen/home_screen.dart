@@ -50,12 +50,12 @@ class _HomeScreenState extends State<HomeScreen> {
                     );
                   },
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: const Color.fromRGBO(33, 150, 243, 1),
+                    backgroundColor: const Color.fromARGB(255, 62, 60, 64),
                     padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 15),
                   ),
                   child: const Text(
                     "View All Items",
-                    style: TextStyle(fontSize: 18),
+                    style: TextStyle(fontSize: 18, color: Colors.white),
                   ),
                 ),
               ],

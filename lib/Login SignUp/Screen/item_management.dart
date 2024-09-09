@@ -15,7 +15,7 @@ class _ItemManagementState extends State<ItemManagement> {
   String _searchQuery = '';
 
   // Define the light blue color
-  final Color lightBlue = Color(0xFF75BFEC);
+  final Color lightBlue = const Color.fromRGBO(33, 150, 243, 1);
 
   @override
   void initState() {
@@ -102,11 +102,11 @@ class _ItemManagementState extends State<ItemManagement> {
                           borderRadius: BorderRadius.circular(8.0),
                           child: Image.network(itemData['imageUrl'], width: 60, height: 60, fit: BoxFit.cover),
                         )
-                      : Icon(Icons.image_not_supported, size: 60, color: lightBlue),
+                      :const Icon(Icons.image_not_supported, size: 60,  color: Colors.black),
                   title: Text(itemData['name'], style: const TextStyle(fontWeight: FontWeight.bold)),
                   subtitle: Text(
                     "\$${itemData['price']} (${itemData['quantity']} in stock)",
-                    style: TextStyle(color: lightBlue),
+                    style: const TextStyle(color: Colors.black),
                   ),
                   trailing: IconButton(
                     icon: const Icon(Icons.delete, color: Colors.red),
@@ -148,7 +148,7 @@ class _ItemManagementState extends State<ItemManagement> {
           );
         },
         child: const Icon(Icons.add),
-        backgroundColor: lightBlue,
+        backgroundColor: const Color.fromRGBO(33, 150, 243, 1),
       ),
     );
   }

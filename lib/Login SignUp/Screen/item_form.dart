@@ -24,7 +24,7 @@ class _ItemFormPageState extends State<ItemFormPage> {
   final picker = ImagePicker();
 
   // Define the light blue color
-  final Color lightBlue = Color(0xFF75BFEC);
+  final Color lightBlue = const Color.fromRGBO(33, 150, 243, 1);
 
   @override
   void initState() {
@@ -138,7 +138,7 @@ class _ItemFormPageState extends State<ItemFormPage> {
                     style: TextStyle(color: Colors.white),
                   ),
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: lightBlue,
+                    backgroundColor: const Color.fromRGBO(33, 150, 243, 1),
                     padding: const EdgeInsets.symmetric(vertical: 15),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(10),
@@ -160,7 +160,7 @@ class _ItemFormPageState extends State<ItemFormPage> {
         controller: controller,
         decoration: InputDecoration(
           labelText: label,
-          prefixIcon: Icon(icon, color: lightBlue),
+          prefixIcon: Icon(icon, color: Colors.black),
           border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
           focusedBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(10),
@@ -189,9 +189,9 @@ class _ItemFormPageState extends State<ItemFormPage> {
         ElevatedButton.icon(
           onPressed: _pickImage,
           icon: Icon(_imageFile == null ? Icons.add_photo_alternate : Icons.edit, color: Colors.white),
-          label: Text(_imageFile == null ? 'Add Image' : 'Change Image', style: TextStyle(color: Colors.white)),
+          label: Text(_imageFile == null ? 'Add Image' : 'Change Image', style: const TextStyle(color: Colors.white)),
           style: ElevatedButton.styleFrom(
-            backgroundColor: lightBlue,
+            backgroundColor: const Color.fromRGBO(33, 150, 243, 1),
             padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(10),
