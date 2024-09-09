@@ -7,6 +7,8 @@ plugins {
 }
 
 android {
+    compileSdkVersion 34
+
     namespace = "com.example.visioncart"
     compileSdk = flutter.compileSdkVersion
     ndkVersion = flutter.ndkVersion
