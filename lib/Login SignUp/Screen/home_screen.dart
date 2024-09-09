@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'item_list_page.dart';
 import 'profile_page.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -11,7 +12,6 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> {
   int selectedIndex = 0;
 
-  // Navigation pages
   static const List<Widget> _pages = <Widget>[
     Center(child: Text('Home Page Content', style: TextStyle(fontSize: 24))),
     Center(child: Text('Orders Page', style: TextStyle(fontSize: 24))),
@@ -19,7 +19,6 @@ class _HomeScreenState extends State<HomeScreen> {
     ProfilePage(),
   ];
 
-  // Function to handle navigation tap
   void _onItemTapped(int index) {
     setState(() {
       selectedIndex = index;
@@ -31,27 +30,37 @@ class _HomeScreenState extends State<HomeScreen> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('VisionCart'),
-        backgroundColor: const Color.fromARGB(255, 33, 150, 243),
+        backgroundColor: const Color.fromRGBO(33, 150, 243, 1),
       ),
       body: selectedIndex == 0
-          ? const Center(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Text(
-                    "Congratulation\nYou have successfully Logged In",
-                    textAlign: TextAlign.center,
-                    style: TextStyle(fontSize: 25, fontWeight: FontWeight.bold),
+          ? Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                const Text(
+                  "Welcome to VisionCart",
+                  textAlign: TextAlign.center,
+                  style: TextStyle(fontSize: 25, fontWeight: FontWeight.bold),
+                ),
+                const SizedBox(height: 20),
+                ElevatedButton(
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) =>  const ItemListPage()),
+                    );
+                  },
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: const Color.fromRGBO(33, 150, 243, 1),
+                    padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 15),
                   ),
-                  SizedBox(height: 20),
-                  // You can uncomment below for Google User details
-                  // Image.network("${FirebaseAuth.instance.currentUser!.photoURL}"),
-                  // Text("${FirebaseAuth.instance.currentUser!.email}"),
-                  // Text("${FirebaseAuth.instance.currentUser!.displayName}")
-                ],
-              ),
+                  child: const Text(
+                    "View All Items",
+                    style: TextStyle(fontSize: 18),
+                  ),
+                ),
+              ],
             )
-          : _pages[selectedIndex], // Load different pages based on the tab
+          : _pages[selectedIndex],
       bottomNavigationBar: BottomNavigationBar(
         items: const <BottomNavigationBarItem>[
           BottomNavigationBarItem(
@@ -74,12 +83,8 @@ class _HomeScreenState extends State<HomeScreen> {
         currentIndex: selectedIndex,
         selectedItemColor: const Color.fromARGB(255, 33, 150, 243),
         unselectedItemColor: Colors.grey,
-        backgroundColor: Colors.white,
         onTap: _onItemTapped,
         type: BottomNavigationBarType.fixed,
-        showUnselectedLabels: false,
-        selectedFontSize: 14,
-        unselectedFontSize: 12,
       ),
     );
   }
