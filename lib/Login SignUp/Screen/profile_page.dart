@@ -57,7 +57,7 @@ class _ProfilePageState extends State<ProfilePage> {
           Text(
             label,
             style: const TextStyle(
-              fontSize: 12,
+              fontSize: 16,
               color: Colors.black54,
               fontWeight: FontWeight.bold,
             ),
@@ -66,7 +66,7 @@ class _ProfilePageState extends State<ProfilePage> {
           Text(
             value,
             style: const TextStyle(
-              fontSize: 16,
+              fontSize: 22,
               color: Colors.black87,
             ),
           ),
@@ -136,7 +136,7 @@ class _ProfilePageState extends State<ProfilePage> {
                           padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 15),
                           foregroundColor: Colors.white,
                         ),
-                        child: const Text('Edit Profile'),
+                        child: const Text('Edit Profile', style: TextStyle(fontSize: 20)),
                       ),
                       const SizedBox(height: 20),
                       // Log Out Button
@@ -152,7 +152,7 @@ class _ProfilePageState extends State<ProfilePage> {
                           padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 15),
                           foregroundColor: Colors.white,
                         ),
-                        child: const Text('Log Out'),
+                        child: const Text('Log Out', style: TextStyle(fontSize: 20)),
                       ),
                     ],
                   ),
