@@ -3,6 +3,7 @@ import 'package:visioncart/Login%20SignUp/Widget/button.dart';
 import 'package:visioncart/Login%20With%20Google/google_auth.dart';
 import 'package:visioncart/Password%20Forgot/forgot_password.dart';
 import 'package:visioncart/Phone%20Auth/phone_login.dart';
+import 'package:visioncart/cart/screens/cartScreen.dart';
 import '../Services/authentication.dart';
 import '../Widget/snackbar.dart';
 import '../Widget/text_field.dart';
@@ -106,7 +107,8 @@ class _SignupScreenState extends State<LoginScreen> {
                   backgroundColor: const Color.fromARGB(255, 183, 213, 228),
                   elevation: 5, // Adds shadow effect
                   shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(12), // Optional: Rounded corners
+                    borderRadius:
+                        BorderRadius.circular(12), // Optional: Rounded corners
                   ),
                 ),
                 onPressed: () async {
@@ -120,7 +122,8 @@ class _SignupScreenState extends State<LoginScreen> {
                 },
                 child: Center(
                   child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center, // Centers the icon and text
+                    mainAxisAlignment:
+                        MainAxisAlignment.center, // Centers the icon and text
                     children: [
                       Padding(
                         padding: const EdgeInsets.symmetric(vertical: 8),
@@ -144,8 +147,8 @@ class _SignupScreenState extends State<LoginScreen> {
               ),
             ),
 
-           // for phone authentication 
-           const PhoneAuthentication(),
+            // for phone authentication
+            const PhoneAuthentication(),
             // Don't have an account? got to signup screen
             Padding(
               padding: const EdgeInsets.only(top: 10),
@@ -163,7 +166,8 @@ class _SignupScreenState extends State<LoginScreen> {
                     },
                     child: const Text(
                       "SignUp",
-                      style: TextStyle(fontWeight: FontWeight.bold, color: Colors.blue),
+                      style: TextStyle(
+                          fontWeight: FontWeight.bold, color: Colors.blue),
                     ),
                   )
                 ],
@@ -182,12 +186,12 @@ class _SignupScreenState extends State<LoginScreen> {
         vertical: 15,
       ),
       decoration: const BoxDecoration(
-      gradient: LinearGradient(
-      colors: [Colors.blueAccent, Colors.lightBlueAccent],
-      begin: Alignment.topLeft,
-      end: Alignment.bottomRight,
+        gradient: LinearGradient(
+          colors: [Colors.blueAccent, Colors.lightBlueAccent],
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+        ),
       ),
-  ),
       child: Image.network(
         image,
         height: 40,
