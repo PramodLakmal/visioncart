@@ -30,6 +30,9 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
+  provider: ^6.0.0
+  firebase_storage: ^12.2.0  # Add this line to use Firebase Storage
+  image_picker: ^0.8.6+6
   csv: ^5.0.0
   pdf: ^3.8.1
   printing: ^5.10.0
