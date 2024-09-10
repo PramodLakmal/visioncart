@@ -68,7 +68,7 @@ class _SignupScreenState extends State<LoginScreen> {
           children: [
             SizedBox(
               height: height / 2.7,
-              child: Image.asset('assets/images/login.jpg'),
+              child: Image.network('https://firebasestorage.googleapis.com/v0/b/visioncart-5e1b8.appspot.com/o/Login%20and%20SignUp%2FUntitled%20design%20(12).jpg?alt=media&token=52037aa3-ffe9-4e95-ac8d-1fc22ff6f344'),
             ),
             TextFieldInput(
                 icon: Icons.person,

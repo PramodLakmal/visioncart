@@ -158,7 +158,7 @@ class _ProfilePageState extends State<EditProfile> {
                       const EdgeInsets.symmetric(horizontal: 50, vertical: 15),
                   foregroundColor: Colors.white,
                 ),
-                child: const Text('Update Profile'),
+                child: const Text('Update Profile', style: TextStyle(fontSize: 20)),
               ),
               const SizedBox(height: 20),
               ElevatedButton(
@@ -198,7 +198,7 @@ class _ProfilePageState extends State<EditProfile> {
                       const EdgeInsets.symmetric(horizontal: 50, vertical: 15),
                   foregroundColor: Colors.white,
                 ),
-                child: const Text('Delete Profile'),
+                child: const Text('Delete Profile', style: TextStyle(fontSize: 20)),
               ),
             ],
           ),
@@ -223,9 +223,11 @@ class _ProfilePageState extends State<EditProfile> {
         ],
       ),
       child: TextField(
-        controller: controller,
+        controller: controller, 
+        style: const TextStyle(fontSize: 20),
         decoration: InputDecoration(
           labelText: labelText,
+          labelStyle: const TextStyle(fontSize: 18),
           border: InputBorder.none,
         ),
       ),
