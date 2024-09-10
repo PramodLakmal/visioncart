@@ -7,6 +7,7 @@ import 'package:visioncart/cart/screens/cartScreen.dart';
 import '../Services/authentication.dart';
 import '../Widget/snackbar.dart';
 import '../Widget/text_field.dart';
+import 'admin_dashboard.dart';
 import 'home_screen.dart';
 import 'signup.dart';
 
@@ -38,23 +39,21 @@ class _SignupScreenState extends State<LoginScreen> {
     String res = await AuthMethod().loginUser(
         email: emailController.text, password: passwordController.text);
 
-    if (res == "success") {
-      setState(() {
-        isLoading = false;
-      });
-      //navigate to the home screen
-      Navigator.of(context).pushReplacement(
-        MaterialPageRoute(
-          builder: (context) => const HomeScreen(),
-        ),
-      );
-    } else {
-      setState(() {
-        isLoading = false;
-      });
-      // show error
-      showSnackBar(context, res);
-    }
+    if (res == "admin") {
+  Navigator.of(context).pushReplacement(
+    MaterialPageRoute(
+      builder: (context) => const AdminDashboard(),  // Admin screen
+    ),
+  );
+} else if (res == "user") {
+  Navigator.of(context).pushReplacement(
+    MaterialPageRoute(
+      builder: (context) => const HomeScreen(),  // User screen
+    ),
+  );
+} else {
+  showSnackBar(context, res);  // Show any error messages
+}
   }
 
   @override
