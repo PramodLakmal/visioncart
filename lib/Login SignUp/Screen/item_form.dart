@@ -8,7 +8,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 class ItemFormPage extends StatefulWidget {
   final ItemModel? item;
 
-  const ItemFormPage({Key? key, this.item}) : super(key: key);
+  const ItemFormPage({super.key, this.item});
 
   @override
   _ItemFormPageState createState() => _ItemFormPageState();
@@ -133,16 +133,16 @@ class _ItemFormPageState extends State<ItemFormPage> {
                 const SizedBox(height: 20),
                 ElevatedButton(
                   onPressed: _saveItem,
-                  child: Text(
-                    widget.item == null ? "Add Item" : "Update Item",
-                    style: TextStyle(color: Colors.white),
-                  ),
                   style: ElevatedButton.styleFrom(
                     backgroundColor: const Color.fromRGBO(33, 150, 243, 1),
                     padding: const EdgeInsets.symmetric(vertical: 15),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(10),
                     ),
+                  ),
+                  child: Text(
+                    widget.item == null ? "Add Item" : "Update Item",
+                    style: const TextStyle(color: Colors.white),
                   ),
                 ),
               ],
