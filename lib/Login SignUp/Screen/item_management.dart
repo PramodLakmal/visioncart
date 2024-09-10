@@ -147,8 +147,8 @@ class _ItemManagementState extends State<ItemManagement> {
             MaterialPageRoute(builder: (context) => const ItemFormPage()),
           );
         },
-        child: const Icon(Icons.add),
         backgroundColor: const Color.fromRGBO(33, 150, 243, 1),
+        child: const Icon(Icons.add),
       ),
     );
   }
