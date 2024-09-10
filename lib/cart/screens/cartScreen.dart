@@ -1,9 +1,8 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:visioncart/Login%20SignUp/Services/cartItems.dart';
 import 'package:visioncart/cart/models/item_model.dart';
 import 'package:visioncart/cart/widget/cartlist.dart';
-// Import your database class
+// Import your CartDatabase class for cart operations
 
 class Cart extends StatefulWidget {
   const Cart({super.key});
@@ -20,8 +19,7 @@ class _CartState extends State<Cart> {
   @override
   void initState() {
     super.initState();
-    _cartItemsFuture =
-        CartDatabase().fetchCartItems(); // Fetch data from Firestore
+    _cartItemsFuture = CartDatabase().fetchCartItems('user_id'); // Fetch data from Firestore for a specific user
   }
 
   // Method to calculate grand total
@@ -37,7 +35,6 @@ class _CartState extends State<Cart> {
   void _updateQuantity(int index, int newQuantity, List<Item> cartItems) {
     setState(() {
       cartItems[index].quantity = newQuantity;
-
       CartDatabase().updateItemQuantity(cartItems[index].id, newQuantity);
     });
   }
@@ -45,17 +42,13 @@ class _CartState extends State<Cart> {
   // Function to delete an item from the cart and Firestore
   void _deleteItem(int index, List<Item> cartItems) {
     setState(() {
-      // Remove the item from the local list
       String itemId = cartItems[index].id;
       cartItems.removeAt(index);
-
-      // Also delete the item from Firestore
       CartDatabase().deleteItem(itemId);
     });
   }
 
-  //Functon to toggle the add button
-
+  // Function to toggle the add button
   void _toggleAddButton() {
     setState(() {
       isAddbutton = !isAddbutton;
@@ -105,7 +98,7 @@ class _CartState extends State<Cart> {
         ],
       ),
       body: FutureBuilder<List<Item>>(
-        future: _cartItemsFuture, // Future to get the cart items
+        future: _cartItemsFuture,
         builder: (context, snapshot) {
           if (!snapshot.hasData) {
             return const Center(child: CircularProgressIndicator());
@@ -115,7 +108,7 @@ class _CartState extends State<Cart> {
 
           return Column(
             children: [
-              cartList(
+              CartList(
                 cart: cartItems,
                 onQuantityChanged: (index, newQuantity) {
                   _updateQuantity(index, newQuantity, cartItems);
@@ -133,7 +126,7 @@ class _CartState extends State<Cart> {
                       padding: const EdgeInsets.all(20),
                       child: ElevatedButton(
                           style: ElevatedButton.styleFrom(
-                            minimumSize: const Size(200, 60), // Width, Height
+                            minimumSize: const Size(200, 60),
                           ),
                           onPressed: () {
                             // Place the order

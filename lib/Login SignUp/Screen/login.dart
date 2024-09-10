@@ -3,7 +3,6 @@ import 'package:visioncart/Login%20SignUp/Widget/button.dart';
 import 'package:visioncart/Login%20With%20Google/google_auth.dart';
 import 'package:visioncart/Password%20Forgot/forgot_password.dart';
 import 'package:visioncart/Phone%20Auth/phone_login.dart';
-import 'package:visioncart/cart/screens/cartScreen.dart';
 import '../Services/authentication.dart';
 import '../Widget/snackbar.dart';
 import '../Widget/text_field.dart';

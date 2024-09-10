@@ -1,24 +1,24 @@
 import 'package:flutter/material.dart';
 import 'package:visioncart/cart/models/item_model.dart';
 
-class tile extends StatefulWidget {
-  const tile(
-      {super.key,
-      required this.singleItem,
-      required this.onQuantityChanged,
-      required this.onDelete});
+class ItemTile extends StatefulWidget {
+  const ItemTile({
+    super.key,
+    required this.singleItem,
+    required this.onQuantityChanged,
+    required this.onDelete,
+  });
 
   final Item singleItem;
   final Function(int newQuantity) onQuantityChanged;
   final Function() onDelete;
 
   @override
-  State<tile> createState() => _tileState();
+  State<ItemTile> createState() => _ItemTileState();
 }
 
-class _tileState extends State<tile> {
+class _ItemTileState extends State<ItemTile> {
   late int _quantity;
-  late double total;
 
   @override
   void initState() {
@@ -39,7 +39,6 @@ class _tileState extends State<tile> {
         _quantity--;
       }
     });
-
     widget.onQuantityChanged(_quantity);
   }
 
@@ -52,24 +51,23 @@ class _tileState extends State<tile> {
           children: [
             Row(
               children: [
-                Image.network(
-                  widget.singleItem.image,
-                  width: 100,
-                  height: 100,
+                Container(
+                  width: 300,
+                  child: Image.network(
+                    widget.singleItem.image,
+                    width: 100,
+                    height: 100,
+                  ),
                 ),
                 const Spacer(),
               ],
             ),
             Row(
               children: [
-                Row(
-                  children: [
-                    Text(
-                      widget.singleItem.name,
-                      style: const TextStyle(
-                          fontSize: 30, fontWeight: FontWeight.bold),
-                    ),
-                  ],
+                Text(
+                  widget.singleItem.name,
+                  style: const TextStyle(
+                      fontSize: 30, fontWeight: FontWeight.bold),
                 ),
                 const Spacer(),
                 Text(
@@ -79,15 +77,18 @@ class _tileState extends State<tile> {
                 ),
               ],
             ),
-            Card(
-              child: Row(
-                children: [
-                  Text(
+            const SizedBox(height: 10),
+            Row(
+              children: [
+                Container(
+                  width: 300,
+                  child: Text(
                     widget.singleItem.description,
-                    style: const TextStyle(fontSize: 15),
+                    style: const TextStyle(
+                        fontSize: 10, fontWeight: FontWeight.bold),
                   ),
-                ],
-              ),
+                ),
+              ],
             ),
             Row(
               children: [
@@ -106,14 +107,9 @@ class _tileState extends State<tile> {
                   onPressed: _decreaseQuantity,
                   child: const Icon(Icons.remove),
                 ),
-                const SizedBox(
-                  width: 10,
-                ),
                 const Spacer(),
                 GestureDetector(
-                  onTap: () {
-                    widget.onDelete();
-                  },
+                  onTap: widget.onDelete,
                   child: const Icon(Icons.delete),
                 ),
               ],

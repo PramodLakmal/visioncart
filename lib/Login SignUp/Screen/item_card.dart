@@ -1,4 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:visioncart/Login%20SignUp/Screen/item_model.dart';
+import 'package:visioncart/cart/screens/cartScreen.dart';
+import 'package:visioncart/cart/models/item_model.dart';
+import 'package:visioncart/Login%20SignUp/Services/cartItems.dart';
 
 class ItemCard extends StatelessWidget {
   final String id;
@@ -17,6 +21,18 @@ class ItemCard extends StatelessWidget {
     required this.quantity,
     required this.imageUrl,
   });
+
+  // Method to convert ItemModel to Item
+  Item convertItemModelToItem(ItemModel itemModel) {
+    return Item(
+      id: itemModel.id ?? 'default_id',
+      image: itemModel.imageUrl ?? 'default_image_url',
+      name: itemModel.name ?? 'Unnamed Item',
+      description: itemModel.description ?? 'No description available',
+      price: itemModel.price ?? 0.0,
+      quantity: itemModel.quantity?.toInt() ?? 1,
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -39,7 +55,8 @@ class ItemCard extends StatelessWidget {
             children: [
               // Image section
               ClipRRect(
-                borderRadius: BorderRadius.circular(15.0), // Rounded corners for the image
+                borderRadius: BorderRadius.circular(
+                    15.0), // Rounded corners for the image
                 child: imageUrl.isNotEmpty
                     ? Image.network(
                         imageUrl,
@@ -50,7 +67,7 @@ class ItemCard extends StatelessWidget {
                     : const Icon(Icons.image, size: 250),
               ),
               const SizedBox(height: 16),
-              
+
               // Item name section
               Text(
                 name,
@@ -61,17 +78,18 @@ class ItemCard extends StatelessWidget {
                 ),
               ),
               const SizedBox(height: 8),
-              
+
               // Item description
               Text(
                 description,
                 style: const TextStyle(
                   fontSize: 16,
-                  color: Color.fromARGB(255, 0, 0, 0), // Light color for description
+                  color: Color.fromARGB(
+                      255, 0, 0, 0), // Light color for description
                 ),
               ),
               const SizedBox(height: 16),
-              
+
               // Price and Quantity section
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -81,7 +99,7 @@ class ItemCard extends StatelessWidget {
                     style: const TextStyle(
                       fontSize: 24,
                       fontWeight: FontWeight.bold,
-                      color: Color.fromARGB(255, 0, 0, 0), // Pink to match app theme
+                      color: Color.fromARGB(255, 0, 0, 0),
                     ),
                   ),
                   Text(
@@ -93,7 +111,6 @@ class ItemCard extends StatelessWidget {
                   ),
                 ],
               ),
-              
               const SizedBox(height: 24),
 
               // Bottom action buttons
@@ -101,31 +118,61 @@ class ItemCard extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
                   ElevatedButton(
-                    onPressed: () {},
+                    onPressed: () {
+                      // Create ItemModel
+                      ItemModel itemModel = ItemModel(
+                        id: id,
+                        name: name,
+                        description: description,
+                        price: price,
+                        quantity: quantity,
+                        imageUrl: imageUrl,
+                      );
+
+                      // Convert ItemModel to Item
+                      Item item = convertItemModelToItem(itemModel);
+
+                      // Add item to cart
+                      CartDatabase().addToCart(item);
+
+                      // Navigate to the Cart screen
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (context) => const Cart()),
+                      );
+                    },
                     style: ElevatedButton.styleFrom(
                       backgroundColor: const Color.fromARGB(255, 62, 60, 64),
-                      padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 16),
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 40, vertical: 16),
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(10.0),
                       ),
                     ),
                     child: const Text(
                       'Add to Cart',
-                      style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold , color: Colors.white),
+                      style: TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.white),
                     ),
                   ),
                   ElevatedButton(
                     onPressed: () {},
                     style: ElevatedButton.styleFrom(
                       backgroundColor: const Color.fromARGB(255, 62, 60, 64),
-                      padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 16),
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 40, vertical: 16),
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(10.0),
                       ),
                     ),
                     child: const Text(
                       'Buy Now',
-                      style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold , color: Colors.white),
+                      style: TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.white),
                     ),
                   ),
                 ],

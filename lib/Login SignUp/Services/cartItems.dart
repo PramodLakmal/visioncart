@@ -2,52 +2,54 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:visioncart/cart/models/item_model.dart';
 
 class CartDatabase {
-  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+  final CollectionReference cartsCollection =
+      FirebaseFirestore.instance.collection('Carts');
 
-  // Method to fetch cart items from Firestore
-  Future<List<Item>> fetchCartItems() async {
-    try {
-      // Fetch data from the 'cartItems' collection in Firestore
-      QuerySnapshot snapshot = await _firestore.collection('Item').get();
+  // Add item to cart
+  Future<void> addToCart(Item item) async {
+    final userCart = cartsCollection
+        .doc('user_id')
+        .collection('userCart'); // Replace 'user_id' with logged-in user's ID
 
-      // Map each document to an Item object and return the list
-      return snapshot.docs.map((doc) {
-        return Item(
-          id: doc.id,
-          image: doc['image'],
-          name: doc['name'],
-          description: doc['description'],
-          price: doc['price'].toDouble(), // Convert to double if needed
-          quantity: doc['quantity'],
-        );
-      }).toList();
-    } catch (e) {
-      // Handle errors by printing the error or returning an empty list
-      print('Error fetching cart items: $e');
-      return [];
-    }
+    await userCart.doc(item.id).set({
+      'id': item.id,
+      'name': item.name,
+      'description': item.description,
+      'price': item.price,
+      'quantity': 1,
+      'image': item.image,
+    });
   }
 
-  // Function to update the quantity of an item in Firestore
-  Future<void> updateItemQuantity(String id, int newQuantity) async {
-    try {
-      // Update the quantity field in the Firestore document with the specified ID
-      await _firestore.collection('Item').doc(id).update({
-        'quantity': newQuantity,
-      });
-      print('Item quantity updated successfully');
-    } catch (e) {
-      print('Error updating item quantity: $e');
-    }
+  // Fetch cart items (you can customize this further if needed)
+  Future<List<Item>> fetchCartItems(String userId) async {
+    final userCart = cartsCollection.doc(userId).collection('userCart');
+    QuerySnapshot snapshot = await userCart.get();
+    return snapshot.docs.map((doc) {
+      return Item(
+        id: doc['id'],
+        image: doc['image'],
+        name: doc['name'],
+        description: doc['description'],
+        price: doc['price'],
+        quantity: doc['quantity'],
+      );
+    }).toList();
   }
 
-  // Add a method to delete an item from the cart
-  Future<void> deleteItem(String id) async {
-    try {
-      await _firestore.collection('Item').doc(id).delete();
-      print('Item deleted successfully');
-    } catch (e) {
-      print('Error deleting item: $e');
-    }
+  // Update item quantity
+  Future<void> updateItemQuantity(String itemId, int newQuantity) async {
+    final userCart = cartsCollection
+        .doc('user_id')
+        .collection('userCart'); // Replace 'user_id' with logged-in user's ID
+    await userCart.doc(itemId).update({'quantity': newQuantity});
+  }
+
+  // Delete item from cart
+  Future<void> deleteItem(String itemId) async {
+    final userCart = cartsCollection
+        .doc('user_id')
+        .collection('userCart'); // Replace 'user_id' with logged-in user's ID
+    await userCart.doc(itemId).delete();
   }
 }
