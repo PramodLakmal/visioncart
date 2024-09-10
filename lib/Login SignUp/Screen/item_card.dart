@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:visioncart/Login%20SignUp/Screen/item_model.dart';
 import 'package:visioncart/cart/screens/cartScreen.dart';
@@ -25,6 +26,7 @@ class ItemCard extends StatelessWidget {
   // Method to convert ItemModel to Item
   Item convertItemModelToItem(ItemModel itemModel) {
     return Item(
+      userId: FirebaseAuth.instance.currentUser!.uid,
       id: itemModel.id ?? 'default_id',
       image: itemModel.imageUrl ?? 'default_image_url',
       name: itemModel.name ?? 'Unnamed Item',

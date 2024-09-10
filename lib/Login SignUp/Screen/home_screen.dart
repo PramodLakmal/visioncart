@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:visioncart/cart/screens/cartScreen.dart';
 import 'item_list_page.dart';
 import 'profile_page.dart';
 //import 'chat_screen.dart';
@@ -16,7 +17,7 @@ class _HomeScreenState extends State<HomeScreen> {
   static const List<Widget> _pages = <Widget>[
     Center(child: Text('Home Page Content', style: TextStyle(fontSize: 24))),
     Center(child: Text('Orders Page', style: TextStyle(fontSize: 24))),
-    Center(child: Text('Cart Page', style: TextStyle(fontSize: 24))),
+    Cart(),
     ProfilePage(),
   ];
 
@@ -101,7 +102,8 @@ class _HomeScreenState extends State<HomeScreen> {
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                            builder: (context) => HomeScreen()), // Navigate to voice interaction
+                            builder: (context) =>
+                                const HomeScreen()), // Navigate to voice interaction
                       );
                     },
                     style: ElevatedButton.styleFrom(
@@ -148,7 +150,8 @@ class _HomeScreenState extends State<HomeScreen> {
         currentIndex: selectedIndex,
         selectedItemColor: const Color.fromARGB(255, 33, 150, 243),
         unselectedItemColor: Colors.grey,
-        selectedLabelStyle: const TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
+        selectedLabelStyle:
+            const TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
         unselectedLabelStyle: const TextStyle(fontSize: 12),
         onTap: _onItemTapped,
         type: BottomNavigationBarType.fixed,

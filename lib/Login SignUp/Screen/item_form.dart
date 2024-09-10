@@ -142,7 +142,7 @@ class _ItemFormPageState extends State<ItemFormPage> {
                   ),
                   child: Text(
                     widget.item == null ? "Add Item" : "Update Item",
-                    style: TextStyle(color: Colors.white),
+                    style: const TextStyle(color: Colors.white),
                   ),
                 ),
               ],

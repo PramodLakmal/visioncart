@@ -4,6 +4,8 @@ import 'package:speech_to_text/speech_to_text.dart' as stt;
 import '../Services/voiceflow_service.dart';
 
 class ChatScreen extends StatefulWidget {
+  const ChatScreen({super.key});
+
   @override
   _ChatScreenState createState() => _ChatScreenState();
 }
@@ -57,7 +59,7 @@ class _ChatScreenState extends State<ChatScreen> {
           });
         });
 
-        Future.delayed(Duration(seconds: 5), () {
+        Future.delayed(const Duration(seconds: 5), () {
           _stopListening();
         });
       }
@@ -89,7 +91,7 @@ class _ChatScreenState extends State<ChatScreen> {
       if (_scrollController.hasClients) {
         _scrollController.animateTo(
           _scrollController.position.maxScrollExtent,
-          duration: Duration(milliseconds: 300),
+          duration: const Duration(milliseconds: 300),
           curve: Curves.easeOut,
         );
       }
@@ -100,7 +102,7 @@ class _ChatScreenState extends State<ChatScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Voice Interaction'),
+        title: const Text('Voice Interaction'),
         backgroundColor: Colors.blueAccent,
       ),
       body: Padding(
@@ -135,23 +137,23 @@ class _ChatScreenState extends State<ChatScreen> {
                 },
               ),
             ),
-            SizedBox(height: 20),
+            const SizedBox(height: 20),
             ElevatedButton(
               onPressed: _startListening,
-              child: Text(
-                _isListening ? 'Listening...' : 'Press to Speak',
-                style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-              ),
               style: ElevatedButton.styleFrom(
-                padding: EdgeInsets.symmetric(horizontal: 40, vertical: 20),
+                padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 20),
                 backgroundColor: Colors.blueAccent,
                 foregroundColor: Colors.white,
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(12),
                 ),
               ),
+              child: Text(
+                _isListening ? 'Listening...' : 'Press to Speak',
+                style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+              ),
             ),
-            SizedBox(height: 20),
+            const SizedBox(height: 20),
           ],
         ),
       ),

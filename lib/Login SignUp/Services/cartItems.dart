@@ -8,7 +8,7 @@ class CartDatabase {
   // Add item to cart
   Future<void> addToCart(Item item) async {
     final userCart = cartsCollection
-        .doc('user_id')
+        .doc(item.userId)
         .collection('userCart'); // Replace 'user_id' with logged-in user's ID
 
     await userCart.doc(item.id).set({
@@ -27,6 +27,7 @@ class CartDatabase {
     QuerySnapshot snapshot = await userCart.get();
     return snapshot.docs.map((doc) {
       return Item(
+        userId: userId,
         id: doc['id'],
         image: doc['image'],
         name: doc['name'],
@@ -38,15 +39,16 @@ class CartDatabase {
   }
 
   // Update item quantity
-  Future<void> updateItemQuantity(String itemId, int newQuantity) async {
+  Future<void> updateItemQuantity(
+      String itemId, int newQuantity, String userId) async {
     final userCart = cartsCollection
-        .doc('user_id')
+        .doc(userId)
         .collection('userCart'); // Replace 'user_id' with logged-in user's ID
     await userCart.doc(itemId).update({'quantity': newQuantity});
   }
 
   // Delete item from cart
-  Future<void> deleteItem(String itemId) async {
+  Future<void> deleteItem(String itemId, String userId) async {
     final userCart = cartsCollection
         .doc('user_id')
         .collection('userCart'); // Replace 'user_id' with logged-in user's ID

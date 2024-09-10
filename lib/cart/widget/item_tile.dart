@@ -51,7 +51,7 @@ class _ItemTileState extends State<ItemTile> {
           children: [
             Row(
               children: [
-                Container(
+                SizedBox(
                   width: 300,
                   child: Image.network(
                     widget.singleItem.image,
@@ -80,7 +80,7 @@ class _ItemTileState extends State<ItemTile> {
             const SizedBox(height: 10),
             Row(
               children: [
-                Container(
+                SizedBox(
                   width: 300,
                   child: Text(
                     widget.singleItem.description,
