@@ -8,10 +8,7 @@ plugins {
 
 android {
     compileSdkVersion 34
-<<<<<<< Updated upstream
 
-=======
->>>>>>> Stashed changes
     namespace = "com.example.visioncart"
     compileSdk = flutter.compileSdkVersion
     ndkVersion = flutter.ndkVersion
