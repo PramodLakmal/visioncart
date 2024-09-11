@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:visioncart/Login%20SignUp/Widget/button.dart';
 import 'package:visioncart/Login%20With%20Google/google_auth.dart';
@@ -9,6 +10,7 @@ import '../Widget/text_field.dart';
 import 'admin_dashboard.dart';
 import 'home_screen.dart';
 import 'signup.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -110,14 +112,39 @@ class _SignupScreenState extends State<LoginScreen> {
                   ),
                 ),
                 onPressed: () async {
-                  await FirebaseServices().signInWithGoogle();
-                  Navigator.pushReplacement(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => const HomeScreen(),
-                    ),
-                  );
+                String result = await FirebaseServices().signInWithGoogle();
+                
+                if (result == "success") {
+                  // Check if the user is an admin or normal user
+                  User? currentUser = FirebaseAuth.instance.currentUser;
+                  if (currentUser != null) {
+                    DocumentSnapshot snapshot = await FirebaseFirestore.instance
+                        .collection('users')
+                        .doc(currentUser.uid)
+                        .get();
+                    
+                    Map<String, dynamic>? data = snapshot.data() as Map<String, dynamic>?;
+                    if (data != null && data['isAdmin'] == true) {
+                      // Navigate to admin dashboard
+                      Navigator.pushReplacement(
+                        context,
+                        MaterialPageRoute(builder: (context) => const AdminDashboard()),
+                      );
+                    } else {
+                      // Navigate to user home screen
+                      Navigator.pushReplacement(
+                        context,
+                        MaterialPageRoute(builder: (context) => const HomeScreen()),
+                      );
+                    }
+                    }
+                  } else {
+                    // Show error message
+                    showSnackBar(context, result);
+                  }
                 },
+
+
                 child: Center(
                   child: Row(
                     mainAxisAlignment:
