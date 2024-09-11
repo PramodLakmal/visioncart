@@ -68,7 +68,7 @@ class _SignupScreenState extends State<LoginScreen> {
           children: [
             SizedBox(
               height: height / 2.7,
-              child: Image.asset('assets/images/login.jpg'),
+              child: Image.network('https://firebasestorage.googleapis.com/v0/b/visioncart-5e1b8.appspot.com/o/Login%20and%20SignUp%2FUntitled%20design%20(12).jpg?alt=media&token=52037aa3-ffe9-4e95-ac8d-1fc22ff6f344'),
             ),
             TextFieldInput(
                 icon: Icons.person,
@@ -105,7 +105,8 @@ class _SignupScreenState extends State<LoginScreen> {
                   backgroundColor: const Color.fromARGB(255, 183, 213, 228),
                   elevation: 5, // Adds shadow effect
                   shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(12), // Optional: Rounded corners
+                    borderRadius:
+                        BorderRadius.circular(12), // Optional: Rounded corners
                   ),
                 ),
                 onPressed: () async {
@@ -119,7 +120,8 @@ class _SignupScreenState extends State<LoginScreen> {
                 },
                 child: Center(
                   child: Row(
-                    mainAxisAlignment: MainAxisAlignment.center, // Centers the icon and text
+                    mainAxisAlignment:
+                        MainAxisAlignment.center, // Centers the icon and text
                     children: [
                       Padding(
                         padding: const EdgeInsets.symmetric(vertical: 8),
@@ -143,8 +145,8 @@ class _SignupScreenState extends State<LoginScreen> {
               ),
             ),
 
-           // for phone authentication 
-           const PhoneAuthentication(),
+            // for phone authentication
+            const PhoneAuthentication(),
             // Don't have an account? got to signup screen
             Padding(
               padding: const EdgeInsets.only(top: 10),
@@ -162,7 +164,8 @@ class _SignupScreenState extends State<LoginScreen> {
                     },
                     child: const Text(
                       "SignUp",
-                      style: TextStyle(fontWeight: FontWeight.bold, color: Colors.blue),
+                      style: TextStyle(
+                          fontWeight: FontWeight.bold, color: Colors.blue),
                     ),
                   )
                 ],
@@ -181,12 +184,12 @@ class _SignupScreenState extends State<LoginScreen> {
         vertical: 15,
       ),
       decoration: const BoxDecoration(
-      gradient: LinearGradient(
-      colors: [Colors.blueAccent, Colors.lightBlueAccent],
-      begin: Alignment.topLeft,
-      end: Alignment.bottomRight,
+        gradient: LinearGradient(
+          colors: [Colors.blueAccent, Colors.lightBlueAccent],
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+        ),
       ),
-  ),
       child: Image.network(
         image,
         height: 40,
