@@ -1,9 +1,8 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:visioncart/cart/models/item_model.dart';
-import 'package:visioncart/cart/screens/cartScreen.dart';
-import 'package:visioncart/cart/widget/cartlist.dart'; 
-import 'package:visioncart/Login%20SignUp/Services/cartItems.dart'; // CartDatabase for fetching items
+import 'package:visioncart/Login%20SignUp/Services/cartItems.dart';
+import 'package:visioncart/cart/screens/placeorderScreen.dart'; // CartDatabase for fetching items
 
 class Checkout extends StatefulWidget {
   final double grandTotal;
@@ -93,9 +92,18 @@ class _CheckoutState extends State<Checkout> {
                     children: [
                       ElevatedButton(
                         onPressed: () {
-                          // Proceed to checkout
+                           Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => PlaceOrder(
+          cartItems: cartItems,
+          grandTotal: widget.grandTotal,
+        ),
+      ),
+    );
+                          
                         },
-                        child: const Text('Confirm and Pay'),
+                        child: const Text('Place Order'),
                       ),
                       const Spacer(),
                       Text(

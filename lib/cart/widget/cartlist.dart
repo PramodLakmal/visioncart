@@ -20,14 +20,10 @@ class CartList extends StatelessWidget {
       child: ListView.builder(
         itemCount: cart.length,
         itemBuilder: (context, index) {
-          return Padding(
-            padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 40),
-            child: ItemTile(
-              singleItem: cart[index],
-              onQuantityChanged: (newQuantity) =>
-                  onQuantityChanged(index, newQuantity),
-              onDelete: () => onDelete(index),
-            ),
+          return ItemTile(
+            singleItem: cart[index],
+            onQuantityChanged: (newQuantity) => onQuantityChanged(index, newQuantity),
+            onDelete: () => onDelete(index),
           );
         },
       ),

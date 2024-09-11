@@ -49,17 +49,10 @@ class _ItemTileState extends State<ItemTile> {
         padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
         child: Column(
           children: [
-            Row(
+            const Row(
               children: [
-                SizedBox(
-                  width: 300,
-                  child: Image.network(
-                    widget.singleItem.image,
-                    width: 100,
-                    height: 100,
-                  ),
-                ),
-                const Spacer(),
+                Icon(Icons.image, size: 100),
+                Spacer(),
               ],
             ),
             Row(
