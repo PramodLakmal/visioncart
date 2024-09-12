@@ -1,4 +1,3 @@
-import 'package:firebase_auth/firebase_auth.dart';
 
 class Item {
   final String id;
