@@ -39,6 +39,22 @@ class _PlaceOrderState extends State<PlaceOrder> {
     });
   }
 
+  // Function to delete cart items from Firebase after placing the order
+  Future<void> _deleteCartItems(String userId) async {
+    final cartCollection = FirebaseFirestore.instance
+        .collection('users')
+        .doc(userId)
+        .collection(
+            'cart'); // Assuming cart items are stored in a 'cart' subcollection under each user document
+
+    final cartSnapshot = await cartCollection.get();
+
+    // Loop through the cart items and delete each
+    for (var doc in cartSnapshot.docs) {
+      await doc.reference.delete();
+    }
+  }
+
   // Submit order to Firebase
   Future<void> _submitOrder() async {
     final String userId = FirebaseAuth.instance.currentUser!.uid;
@@ -57,21 +73,40 @@ class _PlaceOrderState extends State<PlaceOrder> {
       'paymentMethod': paymentOption,
       if (isCashOnDelivery) 'address': addressController.text,
       if (isCashOnDelivery) 'phone': phoneController.text,
+      'timestamp': FieldValue.serverTimestamp(), // Store the current timestamp
     };
 
-    await FirebaseFirestore.instance.collection('orders').add(orderData);
-    // Show confirmation and navigate back
-    ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Order placed successfully!')));
-    Navigator.pop(context);
+    try {
+      // Add order to Firebase Firestore
+      await FirebaseFirestore.instance.collection('orders').add(orderData);
 
-    // Navigate to Orders screen after placing the order
-    Navigator.pushReplacement(
-      context,
-      MaterialPageRoute(
-        builder: (context) => const Orders(),
-      ),
-    );
+      // Delete the cart items after placing the order
+      await _deleteCartItems(userId);
+
+      // Show confirmation message
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Order placed successfully!')),
+      );
+
+      // Clear local cartItems to reflect changes on the UI
+      setState(() {
+        widget.cartItems.clear(); // Clear local cart items list
+      });
+
+      // Navigate to Orders screen after placing the order
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(
+          builder: (context) =>
+              const Orders(), // Assuming you have the Orders screen setup
+        ),
+      );
+    } catch (e) {
+      // Show error message if order placement fails
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Error placing order: $e')),
+      );
+    }
   }
 
   @override

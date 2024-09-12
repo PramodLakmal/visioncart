@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:intl/intl.dart';
 
 class Orders extends StatefulWidget {
   const Orders({super.key});
@@ -20,6 +21,30 @@ class _OrdersState extends State<Orders> {
         .collection('orders')
         .where('userId', isEqualTo: userId)
         .snapshots();
+  }
+
+  // Function to delete an order
+  Future<void> _cancelOrder(String orderId) async {
+    try {
+      await FirebaseFirestore.instance
+          .collection('orders')
+          .doc(orderId)
+          .delete();
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Order cancelled successfully')),
+      );
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Error cancelling order: $e')),
+      );
+    }
+  }
+
+  // Function to check if 30 minutes have passed since the order was placed
+  bool _canCancelOrder(Timestamp orderTimestamp) {
+    final DateTime orderTime = orderTimestamp.toDate();
+    final DateTime currentTime = DateTime.now();
+    return currentTime.difference(orderTime).inMinutes <= 2;
   }
 
   @override
@@ -49,8 +74,11 @@ class _OrdersState extends State<Orders> {
           return ListView.builder(
             itemCount: orders.length,
             itemBuilder: (context, index) {
-              final order = orders[index].data() as Map<String, dynamic>;
+              final orderDoc = orders[index];
+              final order = orderDoc.data() as Map<String, dynamic>;
               final items = order['items'] as List<dynamic>;
+              final Timestamp orderTimestamp = order['timestamp']
+                  as Timestamp; // Assuming order has 'timestamp'
 
               return Card(
                 margin: const EdgeInsets.all(8.0),
@@ -69,6 +97,24 @@ class _OrdersState extends State<Orders> {
                         Text('Address: ${order['address']}'),
                         Text('Phone: ${order['phone']}'),
                       ],
+                      Text(
+                          'Order Placed: ${DateFormat.yMMMd().add_jm().format(orderTimestamp.toDate())}'),
+                      const SizedBox(height: 10),
+                      // Check if the order can be cancelled
+                      if (_canCancelOrder(orderTimestamp))
+                        ElevatedButton(
+                          onPressed: () => _cancelOrder(orderDoc.id),
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: Colors.red,
+                          ),
+                          child: const Text('Cancel Order'),
+                        )
+                      else
+                        const Text(
+                          'Confirmed',
+                          style: TextStyle(
+                              color: Colors.green, fontWeight: FontWeight.bold),
+                        ),
                     ],
                   ),
                 ),
