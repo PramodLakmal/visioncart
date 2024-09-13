@@ -4,6 +4,7 @@ import 'package:visioncart/Login%20SignUp/Screen/item_model.dart';
 import 'package:visioncart/cart/screens/cartScreen.dart';
 import 'package:visioncart/cart/models/item_model.dart';
 import 'package:visioncart/Login%20SignUp/Services/cartItems.dart';
+import 'package:visioncart/cart/screens/checkout.dart';
 
 class ItemCard extends StatelessWidget {
   final String id;
@@ -160,7 +161,27 @@ class ItemCard extends StatelessWidget {
                     ),
                   ),
                   ElevatedButton(
-                    onPressed: () {},
+                    onPressed: () {
+                      // Pass item details directly to the Checkout screen
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => Checkout(
+                            grandTotal:
+                                price * quantity, // Pass the grand total
+                            buyNowItem: Item(
+                              userId: FirebaseAuth.instance.currentUser!.uid,
+                              id: id,
+                              name: name,
+                              description: description,
+                              price: price,
+                              quantity: quantity.toInt(),
+                              image: imageUrl,
+                            ),
+                          ),
+                        ),
+                      );
+                    },
                     style: ElevatedButton.styleFrom(
                       backgroundColor: const Color.fromARGB(255, 62, 60, 64),
                       padding: const EdgeInsets.symmetric(
@@ -172,9 +193,10 @@ class ItemCard extends StatelessWidget {
                     child: const Text(
                       'Buy Now',
                       style: TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.white),
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.white,
+                      ),
                     ),
                   ),
                 ],

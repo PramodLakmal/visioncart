@@ -1,5 +1,7 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:visioncart/cart/screens/cartScreen.dart';
+import 'package:visioncart/cart/screens/orderScreen.dart';
 import 'item_list_page.dart';
 import 'profile_page.dart';
 import 'chat_screen.dart';
@@ -16,7 +18,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
   static const List<Widget> _pages = <Widget>[
     Center(child: Text('Home Page Content', style: TextStyle(fontSize: 24))),
-    Center(child: Text('Orders Page', style: TextStyle(fontSize: 24))),
+    Orders(),
     Cart(),
     ProfilePage(),
   ];
@@ -102,7 +104,8 @@ class _HomeScreenState extends State<HomeScreen> {
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                            builder: (context) => ChatScreen()), // Navigate to voice interaction
+                            builder: (context) =>
+                                ChatScreen()), // Navigate to voice interaction
                       );
                     },
                     style: ElevatedButton.styleFrom(
