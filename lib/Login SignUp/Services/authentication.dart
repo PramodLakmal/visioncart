@@ -77,8 +77,8 @@ Future<String> loginUser({
   return res;
 }
 
-  // for sighout
+  // for signout
   signOut() async {
-    // await _auth.signOut();
+    await _auth.signOut();
   }
 }
