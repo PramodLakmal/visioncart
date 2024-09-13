@@ -50,6 +50,8 @@ dependencies:
   cloud_firestore: ^5.4.0
   firebase_auth: ^5.2.0
   google_sign_in: ^6.2.1
+  open_file: ^3.5.3
+  fluttertoast: ^8.2.8
 
 dev_dependencies:
   flutter_test:
@@ -78,6 +80,7 @@ flutter:
      - assets/images/login.jpg
      - assets/images/signup.jpeg
      - assets/images/otpimage.jpg
+     - assets/images/Untitled_design(12).jpg
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/to/resolution-aware-images

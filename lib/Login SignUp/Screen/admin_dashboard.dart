@@ -1,5 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:visioncart/Login%20SignUp/Screen/admin_login.dart';
 import 'login.dart';
 import 'user_management.dart';
 import 'order_management.dart';
@@ -56,7 +57,7 @@ class AdminDashboard extends StatelessWidget {
                     onPressed: () async {
                       await FirebaseAuth.instance.signOut();
                       Navigator.of(context).pushReplacement(
-                        MaterialPageRoute(builder: (context) => const LoginScreen()),
+                        MaterialPageRoute(builder: (context) => const AdminLogin()),
                       );
                     },
                     style: ElevatedButton.styleFrom(
