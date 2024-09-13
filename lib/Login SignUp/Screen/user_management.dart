@@ -1,114 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-
-void _showEditUserDialog(BuildContext context, Map<String, dynamic> data, String userId) {
-  // TextEditingControllers for user details
-  TextEditingController nameController = TextEditingController(text: data['name']);
-  TextEditingController emailController = TextEditingController(text: data['email']);
-  bool isAdmin = data['isAdmin'] ?? false;
-
-  showDialog(
-    context: context,
-    builder: (BuildContext context) {
-      return AlertDialog(
-        title: const Text('Edit User'),
-        content: Column(
-          mainAxisSize: MainAxisSize.min, // Ensures the dialog resizes based on content
-          children: [
-            // Name input field
-            TextField(
-              controller: nameController,
-              decoration: const InputDecoration(
-                labelText: 'Name',
-                border: OutlineInputBorder(),
-              ),
-            ),
-            const SizedBox(height: 10),
-            
-            // Email input field
-            TextField(
-              controller: emailController,
-              decoration: const InputDecoration(
-                labelText: 'Email',
-                border: OutlineInputBorder(),
-              ),
-            ),
-            const SizedBox(height: 10),
-            
-            // Checkbox for Admin status
-            Row(
-              children: [
-                const Text('Admin'),
-                Checkbox(
-                  value: isAdmin,
-                  onChanged: (value) {
-                    isAdmin = value ?? false;
-                  },
-                ),
-              ],
-            ),
-          ],
-        ),
-        actions: [
-          TextButton(
-            onPressed: () {
-              Navigator.of(context).pop(); // Close the dialog
-            },
-            child: const Text('Cancel'),
-          ),
-          TextButton(
-            onPressed: () async {
-              // Handle update - update Firestore with new data
-              await FirebaseFirestore.instance.collection('users').doc(userId).update({
-                'name': nameController.text.trim(),
-                'email': emailController.text.trim(),
-                'isAdmin': isAdmin,
-              });
-
-              Navigator.of(context).pop(); // Close the dialog after saving
-              ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(content: Text('User details updated')),
-              );
-            },
-            child: const Text('Save'),
-          ),
-        ],
-      );
-    },
-  );
-}
-
-void _showDeleteConfirmationDialog(BuildContext context, String userId) {
-  showDialog(
-    context: context,
-    builder: (BuildContext context) {
-      return AlertDialog(
-        title: const Text('Delete User'),
-        content: const Text('Are you sure you want to delete this user?'),
-        actions: [
-          TextButton(
-            onPressed: () {
-              Navigator.of(context).pop(); // Close the dialog
-            },
-            child: const Text('Cancel'),
-          ),
-          TextButton(
-            onPressed: () async {
-              // Handle deleting the user
-              await FirebaseFirestore.instance.collection('users').doc(userId).delete();
-              Navigator.of(context).pop(); // Close the dialog after deletion
-              ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(content: Text('User deleted')),
-              );
-            },
-            child: const Text('Delete'),
-          ),
-        ],
-      );
-    },
-  );
-}
-
+import 'package:pdf/widgets.dart' as pw;
+import 'package:printing/printing.dart';
 
 class UserManagement extends StatefulWidget {
   const UserManagement({super.key});
@@ -119,7 +12,7 @@ class UserManagement extends StatefulWidget {
 }
 
 class _UserManagementState extends State<UserManagement> {
-  // Controller for the search bar
+  // Search controller and query
   final TextEditingController _searchController = TextEditingController();
   String _searchQuery = '';
 
@@ -129,13 +22,22 @@ class _UserManagementState extends State<UserManagement> {
       appBar: AppBar(
         title: const Text('User Management'),
         backgroundColor: const Color.fromARGB(255, 33, 150, 243),
+        actions: [
+          // PDF Generation button in AppBar
+          IconButton(
+            icon: const Icon(Icons.picture_as_pdf),
+            onPressed: () {
+              _generatePDF(context);
+            },
+          ),
+        ],
       ),
       body: SafeArea(
         child: Padding(
           padding: const EdgeInsets.all(16.0),
           child: Column(
             children: [
-              // Attractive Search Bar
+              // Search bar
               Container(
                 decoration: BoxDecoration(
                   boxShadow: [
@@ -143,7 +45,7 @@ class _UserManagementState extends State<UserManagement> {
                       color: Colors.grey.withOpacity(0.2),
                       spreadRadius: 2,
                       blurRadius: 5,
-                      offset: const Offset(0, 3), // Position of shadow
+                      offset: const Offset(0, 3), // changes position of shadow
                     ),
                   ],
                   borderRadius: BorderRadius.circular(30.0),
@@ -164,21 +66,16 @@ class _UserManagementState extends State<UserManagement> {
                       borderRadius: BorderRadius.circular(30.0),
                       borderSide: BorderSide.none,
                     ),
-                    focusedBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(30.0),
-                      borderSide: const BorderSide(color: Colors.blueAccent),
-                    ),
                     suffixIcon: IconButton(
-                        icon: const Icon(Icons.clear, color: Colors.blueAccent),
-                        onPressed: () {
-                          _searchController.clear();
-                          setState(() {
-                            _searchQuery = '';
-                          });
-                          FocusScope.of(context).requestFocus(FocusNode()); // Clears the focus
-                        },
-                      ),
-
+                      icon: const Icon(Icons.clear, color: Colors.blueAccent),
+                      onPressed: () {
+                        _searchController.clear();
+                        setState(() {
+                          _searchQuery = '';
+                        });
+                        FocusScope.of(context).requestFocus(FocusNode()); // Hide keyboard
+                      },
+                    ),
                   ),
                   onChanged: (query) {
                     setState(() {
@@ -258,8 +155,7 @@ class _UserManagementState extends State<UserManagement> {
                   ),
                   IconButton(
                     icon: const Icon(Icons.delete, color: Colors.red),
-                    onPressed: () async {
-                      // Handle deleting the user
+                    onPressed: () {
                       _showDeleteConfirmationDialog(context, doc.id);
                     },
                   ),
@@ -289,43 +185,164 @@ class _UserManagementState extends State<UserManagement> {
 
         // ListView for small screens
         return ListView.builder(
-        itemCount: filteredUsers.length,
-        itemBuilder: (context, index) {
-          var doc = filteredUsers[index];
-          var data = doc.data() as Map<String, dynamic>;
-          return ListTile(
-            title: Text(data['name'] ?? 'Unknown'),
-            subtitle: Text(data['email'] ?? 'Unknown'),
-            trailing: Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                IconButton(
-                  icon: const Icon(Icons.edit),
-                  onPressed: () {
-                    _showEditUserDialog(context, data, doc.id);
-                  },
-                ),
-                IconButton(
-                  icon: const Icon(Icons.delete, color: Colors.red),
-                  onPressed: () {
-                    _showDeleteConfirmationDialog(context, doc.id);
-                  },
-                ),
-                IconButton(
-                  icon: const Icon(Icons.admin_panel_settings),
-                  onPressed: () async {
-                    bool isAdmin = data['isAdmin'] ?? false;
-                    await FirebaseFirestore.instance.collection('users').doc(doc.id).update({'isAdmin': !isAdmin});
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(content: Text(isAdmin ? 'Revoked admin rights' : 'Granted admin rights'))
-                    );
-                  },
-                ),
-              ],
-            ),
+          itemCount: filteredUsers.length,
+          itemBuilder: (context, index) {
+            var doc = filteredUsers[index];
+            var data = doc.data() as Map<String, dynamic>;
+            return ListTile(
+              title: Text(data['name'] ?? 'Unknown'),
+              subtitle: Text(data['email'] ?? 'Unknown'),
+              trailing: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  IconButton(
+                    icon: const Icon(Icons.edit),
+                    onPressed: () {
+                      _showEditUserDialog(context, data, doc.id);
+                    },
+                  ),
+                  IconButton(
+                    icon: const Icon(Icons.delete, color: Colors.red),
+                    onPressed: () {
+                      _showDeleteConfirmationDialog(context, doc.id);
+                    },
+                  ),
+                ],
+              ),
+            );
+          },
+        );
+      },
+    );
+  }
+
+  // PDF generation function
+  void _generatePDF(BuildContext context) async {
+    final pdf = pw.Document();
+
+    // Fetch users from Firestore
+    QuerySnapshot usersSnapshot = await FirebaseFirestore.instance.collection('users').get();
+    List<QueryDocumentSnapshot> users = usersSnapshot.docs;
+
+    pdf.addPage(
+      pw.Page(
+        build: (pw.Context context) {
+          return pw.Column(
+            crossAxisAlignment: pw.CrossAxisAlignment.start,
+            children: [
+              pw.Text('User Report', style: pw.TextStyle(fontSize: 24, fontWeight: pw.FontWeight.bold)),
+              pw.SizedBox(height: 20),
+              pw.Table.fromTextArray(
+                context: context,
+                headers: ['Name', 'Email', 'Role'],
+                data: users.map((user) {
+                  Map<String, dynamic> data = user.data() as Map<String, dynamic>;
+                  return [
+                    data['name'] ?? 'Unknown',
+                    data['email'] ?? 'Unknown',
+                    data['isAdmin'] ? 'Admin' : 'User',
+                  ];
+                }).toList(),
+              ),
+            ],
           );
         },
-      );
+      ),
+    );
+
+    // Display or share the PDF
+    await Printing.sharePdf(bytes: await pdf.save(), filename: 'user_report.pdf');
+  }
+
+  // User edit dialog (as in your previous code)
+  void _showEditUserDialog(BuildContext context, Map<String, dynamic> data, String userId) {
+    // TextEditingControllers for user details
+    TextEditingController nameController = TextEditingController(text: data['name']);
+    TextEditingController emailController = TextEditingController(text: data['email']);
+    bool isAdmin = data['isAdmin'] ?? false;
+
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('Edit User'),
+          content: Column(
+            mainAxisSize: MainAxisSize.min, // Ensures the dialog resizes based on content
+            children: [
+              // Name input field
+              TextField(
+                controller: nameController,
+                decoration: const InputDecoration(labelText: 'Name'),
+              ),
+              // Email input field
+              TextField(
+                controller: emailController,
+                decoration: const InputDecoration(labelText: 'Email'),
+              ),
+              // Checkbox for Admin status
+              Row(
+                children: [
+                  const Text('Admin'),
+                  Checkbox(
+                    value: isAdmin,
+                    onChanged: (value) {
+                      isAdmin = value ?? false;
+                    },
+                  ),
+                ],
+              ),
+            ],
+          ),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop(); // Close the dialog
+              },
+              child: const Text('Cancel'),
+            ),
+            TextButton(
+              onPressed: () async {
+                // Handle update - update Firestore with new data
+                await FirebaseFirestore.instance.collection('users').doc(userId).update({
+                  'name': nameController.text,
+                  'email': emailController.text,
+                  'isAdmin': isAdmin,
+                });
+                Navigator.of(context).pop(); // Close the dialog after saving
+              },
+              child: const Text('Save'),
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  // User delete confirmation dialog
+  void _showDeleteConfirmationDialog(BuildContext context, String userId) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('Delete User'),
+          content: const Text('Are you sure you want to delete this user?'),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop(); // Close the dialog
+              },
+              child: const Text('Cancel'),
+            ),
+            TextButton(
+              onPressed: () async {
+                // Delete the user document
+                await FirebaseFirestore.instance.collection('users').doc(userId).delete();
+                Navigator.of(context).pop();
+              },
+              child: const Text('Delete'),
+            ),
+          ],
+        );
       },
     );
   }
