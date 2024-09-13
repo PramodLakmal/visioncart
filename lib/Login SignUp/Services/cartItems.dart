@@ -2,56 +2,38 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:visioncart/cart/models/item_model.dart';
 
 class CartDatabase {
-  final CollectionReference cartsCollection =
-      FirebaseFirestore.instance.collection('Carts');
+  final CollectionReference cartItemsCollection =
+      FirebaseFirestore.instance.collection('cartItems');
 
-  // Add item to cart
+  // Add item to cart for the logged-in user
   Future<void> addToCart(Item item) async {
-    final userCart = cartsCollection
-        .doc(item.userId)
-        .collection('userCart'); // Replace 'user_id' with logged-in user's ID
-
-    await userCart.doc(item.id).set({
-      'id': item.id,
-      'name': item.name,
-      'description': item.description,
-      'price': item.price,
-      'quantity': 1,
-      'image': item.image,
-    });
+    // Use a composite key like userId + itemId to make the document ID unique for each user
+    String documentId = '${item.userId}_${item.id}';
+    await cartItemsCollection.doc(documentId).set(item.toMap());
   }
 
-  // Fetch cart items (you can customize this further if needed)
+  // Fetch cart items for the logged-in user
   Future<List<Item>> fetchCartItems(String userId) async {
-    final userCart = cartsCollection.doc(userId).collection('userCart');
-    QuerySnapshot snapshot = await userCart.get();
+    QuerySnapshot snapshot = await cartItemsCollection
+        .where('userId',
+            isEqualTo: userId) // Query only items for the logged-in user
+        .get();
+
     return snapshot.docs.map((doc) {
-      return Item(
-        userId: userId,
-        id: doc['id'],
-        image: doc['image'],
-        name: doc['name'],
-        description: doc['description'],
-        price: doc['price'],
-        quantity: doc['quantity'],
-      );
+      return Item.fromMap(doc.data() as Map<String, dynamic>);
     }).toList();
   }
 
-  // Update item quantity
+  // Update item quantity for the logged-in user
   Future<void> updateItemQuantity(
-      String itemId, int newQuantity, String userId) async {
-    final userCart = cartsCollection
-        .doc(userId)
-        .collection('userCart'); // Replace 'user_id' with logged-in user's ID
-    await userCart.doc(itemId).update({'quantity': newQuantity});
+      String itemId, String userId, int newQuantity) async {
+    String documentId = '${userId}_$itemId';
+    await cartItemsCollection.doc(documentId).update({'quantity': newQuantity});
   }
 
-  // Delete item from cart
+  // Delete item from cart for the logged-in user
   Future<void> deleteItem(String itemId, String userId) async {
-    final userCart = cartsCollection
-        .doc('user_id')
-        .collection('userCart'); // Replace 'user_id' with logged-in user's ID
-    await userCart.doc(itemId).delete();
+    String documentId = '${userId}_$itemId';
+    await cartItemsCollection.doc(documentId).delete();
   }
 }
