@@ -8,8 +8,11 @@ class PlaceOrder extends StatefulWidget {
   final List<Item> cartItems;
   final double grandTotal;
 
-  const PlaceOrder(
-      {super.key, required this.cartItems, required this.grandTotal});
+  const PlaceOrder({
+    super.key,
+    required this.cartItems,
+    required this.grandTotal,
+  });
 
   @override
   State<PlaceOrder> createState() => _PlaceOrderState();
@@ -39,19 +42,20 @@ class _PlaceOrderState extends State<PlaceOrder> {
     });
   }
 
-  // Function to delete cart items from Firebase after placing the order
+  // Delete cart items from Firebase based on userId
   Future<void> _deleteCartItems(String userId) async {
-    final cartCollection = FirebaseFirestore.instance
-        .collection('users')
-        .doc(userId)
-        .collection(
-            'cart'); // Assuming cart items are stored in a 'cart' subcollection under each user document
+    final cartCollection = FirebaseFirestore.instance.collection('cartItems');
 
-    final cartSnapshot = await cartCollection.get();
+    // Query for items related to the current user
+    final cartSnapshot =
+        await cartCollection.where('userId', isEqualTo: userId).get();
 
-    // Loop through the cart items and delete each
-    for (var doc in cartSnapshot.docs) {
-      await doc.reference.delete();
+    // Check if there are items to delete
+    if (cartSnapshot.docs.isNotEmpty) {
+      // Loop through the cart items and delete each one
+      for (var doc in cartSnapshot.docs) {
+        await doc.reference.delete();
+      }
     }
   }
 

@@ -23,8 +23,8 @@ class _OrdersState extends State<Orders> {
         .snapshots();
   }
 
-  // Function to delete an order
-  Future<void> _cancelOrder(String orderId) async {
+  // Function to delete an order from Firestore
+  Future<void> _cancelOrder(BuildContext context, String orderId) async {
     try {
       await FirebaseFirestore.instance
           .collection('orders')
@@ -40,7 +40,7 @@ class _OrdersState extends State<Orders> {
     }
   }
 
-  // Function to check if 30 minutes have passed since the order was placed
+  // Check if the order can be cancelled (within 2 minutes)
   bool _canCancelOrder(Timestamp orderTimestamp) {
     final DateTime orderTime = orderTimestamp.toDate();
     final DateTime currentTime = DateTime.now();
@@ -77,33 +77,99 @@ class _OrdersState extends State<Orders> {
               final orderDoc = orders[index];
               final order = orderDoc.data() as Map<String, dynamic>;
               final items = order['items'] as List<dynamic>;
-              final Timestamp orderTimestamp = order['timestamp']
-                  as Timestamp; // Assuming order has 'timestamp'
+              final Timestamp orderTimestamp = order['timestamp'] as Timestamp;
+              final String paymentMethod = order['paymentMethod'] as String;
+              final String status = order['status'] ?? 'pending';
 
               return Card(
                 margin: const EdgeInsets.all(8.0),
-                child: ListTile(
-                  title: Text('Order Total: Rs ${order['total']}'),
-                  subtitle: Column(
+                child: Padding(
+                  padding: const EdgeInsets.all(10.0),
+                  child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text('Payment Method: ${order['paymentMethod']}'),
-                      ...items.map(
-                        (item) => Text(
-                          '${item['name']} - Quantity: ${item['quantity']} - Price: Rs ${item['price']}',
+                      // Main Title
+                      Text(
+                        'Your Order',
+                        style: const TextStyle(
+                          fontSize: 20,
+                          fontWeight: FontWeight.bold,
                         ),
                       ),
-                      if (order['paymentMethod'] == 'Cash on Delivery') ...[
-                        Text('Address: ${order['address']}'),
-                        Text('Phone: ${order['phone']}'),
-                      ],
-                      Text(
-                          'Order Placed: ${DateFormat.yMMMd().add_jm().format(orderTimestamp.toDate())}'),
                       const SizedBox(height: 10),
-                      // Check if the order can be cancelled
+
+                      // Order Total
+                      Text(
+                        'Order Total: Rs ${order['total']}',
+                        style: const TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      const SizedBox(height: 10),
+
+                      // Payment Method
+                      Text('Payment Method: $paymentMethod'),
+                      const SizedBox(height: 10),
+
+                      // Table Header
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: const [
+                          Expanded(child: Text('Item Name')),
+                          Expanded(child: Text('Quantity')),
+                          Expanded(child: Text('Unit Price')),
+                          Expanded(child: Text('Amount')),
+                        ],
+                      ),
+                      const Divider(height: 10),
+
+                      // Order Items
+                      ...items.map(
+                        (item) => Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Expanded(child: Text(item['name'])),
+                            Expanded(child: Text('${item['quantity']}')),
+                            Expanded(child: Text('Rs ${item['price']}')),
+                            Expanded(
+                              child: Text(
+                                'Rs ${item['price'] * item['quantity']}',
+                                textAlign: TextAlign.right,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      const Divider(height: 10),
+
+                      // Order Placed
+                      Text(
+                        'Order Placed: ${DateFormat.yMMMd().add_jm().format(orderTimestamp.toDate())}',
+                      ),
+                      const SizedBox(height: 10),
+                      // Show a message based on the order status
+                      if (status == 'packed') ...[
+                        if (paymentMethod == 'Cash on Delivery')
+                          const Text(
+                            'Order is on the way',
+                            style: TextStyle(
+                                color: Colors.green,
+                                fontWeight: FontWeight.bold),
+                          )
+                        else
+                          const Text(
+                            'Pick your order at the shop',
+                            style: TextStyle(
+                                color: Colors.green,
+                                fontWeight: FontWeight.bold),
+                          ),
+                      ],
+                      const SizedBox(height: 10),
+                      // Show Delete or Confirmed based on time since order was placed
                       if (_canCancelOrder(orderTimestamp))
                         ElevatedButton(
-                          onPressed: () => _cancelOrder(orderDoc.id),
+                          onPressed: () => _cancelOrder(context, orderDoc.id),
                           style: ElevatedButton.styleFrom(
                             backgroundColor: Colors.red,
                           ),
@@ -115,6 +181,20 @@ class _OrdersState extends State<Orders> {
                           style: TextStyle(
                               color: Colors.green, fontWeight: FontWeight.bold),
                         ),
+
+                      const SizedBox(height: 10),
+
+                      // Quote
+                      const Center(
+                        child: Text(
+                          'Thank you for shopping with us!',
+                          style: TextStyle(
+                            fontStyle: FontStyle.italic,
+                            fontSize: 14,
+                            color: Colors.grey,
+                          ),
+                        ),
+                      ),
                     ],
                   ),
                 ),
