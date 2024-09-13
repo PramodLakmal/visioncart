@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'dart:io';
 import 'package:firebase_storage/firebase_storage.dart';
+import 'package:firebase_auth/firebase_auth.dart'; // Import Firebase Authentication
 import 'item_model.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
@@ -60,8 +61,18 @@ class _ItemFormPageState extends State<ItemFormPage> {
   }
 
   Future<String?> _uploadImage(File imageFile) async {
+    User? user = FirebaseAuth.instance.currentUser; // Check for authenticated user
+    if (user == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('User not authenticated')),
+      );
+      return null;
+    }
+
     try {
-      final storageRef = FirebaseStorage.instance.ref().child('item_images/${DateTime.now().millisecondsSinceEpoch}.jpg');
+      final storageRef = FirebaseStorage.instance
+          .ref()
+          .child('item_images/${DateTime.now().millisecondsSinceEpoch}.jpg');
       UploadTask uploadTask = storageRef.putFile(imageFile);
       TaskSnapshot snapshot = await uploadTask.whenComplete(() => null);
       return await snapshot.ref.getDownloadURL();
