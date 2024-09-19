@@ -4,7 +4,7 @@ import 'package:visioncart/Login%20SignUp/Screen/admin_login.dart';
 import 'login.dart';
 import 'user_management.dart';
 import 'order_management.dart';
-import 'item_management.dart';
+import '../../items/screens/item_management.dart';
 
 class AdminDashboard extends StatelessWidget {
   const AdminDashboard({super.key});

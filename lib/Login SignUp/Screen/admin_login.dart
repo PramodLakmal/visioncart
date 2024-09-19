@@ -50,12 +50,12 @@ class _AdminLoginState extends State<AdminLogin> {
           if (isAdmin) {
             Navigator.pushReplacement(
               context,
-              MaterialPageRoute(builder: (context) => AdminDashboard()),  // Web Admin Dashboard
+              MaterialPageRoute(builder: (context) => const AdminDashboard()),  // Web Admin Dashboard
             );
           } else {
             Navigator.pushReplacement(
               context,
-              MaterialPageRoute(builder: (context) => HomeScreen()),  // Mobile User Home
+              MaterialPageRoute(builder: (context) => const HomeScreen()),  // Mobile User Home
             );
           }
         }

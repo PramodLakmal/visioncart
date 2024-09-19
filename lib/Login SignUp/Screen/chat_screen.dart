@@ -150,7 +150,7 @@ class _ChatScreenState extends State<ChatScreen> {
               ),
               child: Text(
                 _isListening ? 'Listening...' : 'Press to Speak',
-                style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
               ),
             ),
             const SizedBox(height: 20),

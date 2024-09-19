@@ -1,8 +1,7 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:visioncart/cart/screens/cartScreen.dart';
 import 'package:visioncart/cart/screens/orderScreen.dart';
-import 'item_list_page.dart';
+import '../../items/screens/item_list_page.dart';
 import 'profile_page.dart';
 import 'chat_screen.dart';
 
@@ -105,7 +104,7 @@ class _HomeScreenState extends State<HomeScreen> {
                         context,
                         MaterialPageRoute(
                             builder: (context) =>
-                                ChatScreen()), // Navigate to voice interaction
+                                const ChatScreen()), // Navigate to voice interaction
                       );
                     },
                     style: ElevatedButton.styleFrom(

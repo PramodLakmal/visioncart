@@ -1,6 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:visioncart/Login%20SignUp/Screen/item_model.dart';
+import 'package:visioncart/items/models/item_model.dart';
 import 'package:visioncart/cart/screens/cartScreen.dart';
 import 'package:visioncart/cart/models/item_model.dart';
 import 'package:visioncart/Login%20SignUp/Services/cartItems.dart';
