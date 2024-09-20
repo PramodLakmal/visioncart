@@ -47,10 +47,18 @@ class _AdminLoginState extends State<AdminLogin> {
             MaterialPageRoute(builder: (context) => AdminDashboard()),  // Web Admin Dashboard
           );
         } else {
-          Navigator.pushReplacement(
-            context,
-            MaterialPageRoute(builder: (context) => HomeScreen()),  // Mobile User Home
-          );
+          // Navigate to respective dashboard
+          if (isAdmin) {
+            Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(builder: (context) => const AdminDashboard()),  // Web Admin Dashboard
+            );
+          } else {
+            Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(builder: (context) => const HomeScreen()),  // Mobile User Home
+            );
+          }
         }
       }
     } on FirebaseAuthException catch (e) {

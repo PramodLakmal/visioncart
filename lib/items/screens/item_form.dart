@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
-import 'dart:io';
+import 'dart:typed_data';  // Add this import
 import 'package:firebase_storage/firebase_storage.dart';
-import 'package:firebase_auth/firebase_auth.dart'; // Import Firebase Authentication
-import 'item_model.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import '../models/item_model.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 class ItemFormPage extends StatefulWidget {
@@ -21,10 +21,9 @@ class _ItemFormPageState extends State<ItemFormPage> {
   late TextEditingController _descriptionController;
   late TextEditingController _priceController;
   late TextEditingController _quantityController;
-  File? _imageFile;
+  Uint8List? _imageBytes;
   final picker = ImagePicker();
 
-  // Define the light blue color
   final Color lightBlue = const Color.fromRGBO(33, 150, 243, 1);
 
   @override
@@ -49,8 +48,9 @@ class _ItemFormPageState extends State<ItemFormPage> {
     try {
       final pickedFile = await picker.pickImage(source: ImageSource.gallery);
       if (pickedFile != null) {
+        final bytes = await pickedFile.readAsBytes();
         setState(() {
-          _imageFile = File(pickedFile.path);
+          _imageBytes = bytes;
         });
       }
     } catch (e) {
@@ -60,11 +60,11 @@ class _ItemFormPageState extends State<ItemFormPage> {
     }
   }
 
-  Future<String?> _uploadImage(File imageFile) async {
-    User? user = FirebaseAuth.instance.currentUser; // Check for authenticated user
+  Future<String?> _uploadImage(Uint8List imageBytes) async {
+    User? user = FirebaseAuth.instance.currentUser;
     if (user == null) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('User not authenticated')),
+        const SnackBar(content: Text('User not authenticated')),
       );
       return null;
     }
@@ -73,9 +73,13 @@ class _ItemFormPageState extends State<ItemFormPage> {
       final storageRef = FirebaseStorage.instance
           .ref()
           .child('item_images/${DateTime.now().millisecondsSinceEpoch}.jpg');
-      UploadTask uploadTask = storageRef.putFile(imageFile);
+      UploadTask uploadTask = storageRef.putData(imageBytes);
       TaskSnapshot snapshot = await uploadTask.whenComplete(() => null);
-      return await snapshot.ref.getDownloadURL();
+      String downloadURL = await snapshot.ref.getDownloadURL();
+
+      print('Firebase image URL: $downloadURL');
+
+      return downloadURL;
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Error uploading image: $e')),
@@ -89,8 +93,8 @@ class _ItemFormPageState extends State<ItemFormPage> {
       _formKey.currentState!.save();
       String? imageUrl;
 
-      if (_imageFile != null) {
-        imageUrl = await _uploadImage(_imageFile!);
+      if (_imageBytes != null) {
+        imageUrl = await _uploadImage(_imageBytes!);
       }
 
       try {
@@ -191,16 +195,18 @@ class _ItemFormPageState extends State<ItemFormPage> {
   Widget _buildImagePicker() {
     return Column(
       children: [
-        if (_imageFile != null)
+        if (_imageBytes != null)
           ClipRRect(
             borderRadius: BorderRadius.circular(10),
-            child: Image.file(_imageFile!, height: 200, width: 200, fit: BoxFit.cover),
-          ),
+            child: Image.memory(_imageBytes!, height: 200, width: 200, fit: BoxFit.cover),
+          )
+        else
+          const Text('No image selected'),
         const SizedBox(height: 10),
         ElevatedButton.icon(
           onPressed: _pickImage,
-          icon: Icon(_imageFile == null ? Icons.add_photo_alternate : Icons.edit, color: Colors.white),
-          label: Text(_imageFile == null ? 'Add Image' : 'Change Image', style: const TextStyle(color: Colors.white)),
+          icon: Icon(_imageBytes == null ? Icons.add_photo_alternate : Icons.edit, color: Colors.white),
+          label: Text(_imageBytes == null ? 'Add Image' : 'Change Image', style: const TextStyle(color: Colors.white)),
           style: ElevatedButton.styleFrom(
             backgroundColor: const Color.fromRGBO(33, 150, 243, 1),
             padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),

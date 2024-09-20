@@ -122,16 +122,16 @@ class _ItemListPageState extends State<ItemListPage> {
                       borderRadius: BorderRadius.circular(10),
                     ),
                     child: Padding(
-                      padding: const EdgeInsets.symmetric(vertical: 16.0, horizontal: 8.0),
+                      padding: const EdgeInsets.symmetric(vertical: 10.0, horizontal: 8.0),
                       child: ListTile(
                         contentPadding: const EdgeInsets.all(8.0),
                         leading: imageUrl.isNotEmpty
                             ? ClipRRect(
                                 borderRadius: BorderRadius.circular(8.0),
                                 child: Image.network(imageUrl,
-                                    width: 60, height: 60, fit: BoxFit.cover),
+                                    width: 80, height: 80, fit: BoxFit.cover),
                               )
-                            : const Icon(Icons.image, size: 50),
+                            : const Icon(Icons.image, size: 50), 
                         title: Text(
                           name,
                           style: const TextStyle(
