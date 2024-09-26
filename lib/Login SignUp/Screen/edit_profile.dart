@@ -131,7 +131,8 @@ class _ProfilePageState extends State<EditProfile> {
                     )
                   : const CircleAvatar(
                       radius: 50,
-                      backgroundColor: Colors.grey,
+                      backgroundColor: Colors.black87,
+                      foregroundColor: Colors.white,
                       child: Icon(Icons.person, size: 50),
                     ),
               const SizedBox(height: 20),
@@ -153,12 +154,12 @@ class _ProfilePageState extends State<EditProfile> {
                   );
                 },
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: const Color.fromRGBO(33, 150, 243, 1),
+                  backgroundColor: Colors.black87,
                   padding:
                       const EdgeInsets.symmetric(horizontal: 50, vertical: 15),
                   foregroundColor: Colors.white,
                 ),
-                child: const Text('Update Profile', style: TextStyle(fontSize: 20)),
+                child: const Text('Update Profile', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
               ),
               const SizedBox(height: 20),
               ElevatedButton(
@@ -193,12 +194,12 @@ class _ProfilePageState extends State<EditProfile> {
                   }
                 },
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.red, // Red color for delete button
+                  backgroundColor: Colors.black87, // Red color for delete button
                   padding:
                       const EdgeInsets.symmetric(horizontal: 50, vertical: 15),
                   foregroundColor: Colors.white,
                 ),
-                child: const Text('Delete Profile', style: TextStyle(fontSize: 20)),
+                child: const Text('Delete Profile', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
               ),
             ],
           ),
@@ -212,7 +213,7 @@ class _ProfilePageState extends State<EditProfile> {
       margin: const EdgeInsets.symmetric(vertical: 10, horizontal: 10),
       padding: const EdgeInsets.symmetric(horizontal: 10),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: Colors.black87,
         borderRadius: BorderRadius.circular(10),
         boxShadow: const [
           BoxShadow(
@@ -224,10 +225,10 @@ class _ProfilePageState extends State<EditProfile> {
       ),
       child: TextField(
         controller: controller, 
-        style: const TextStyle(fontSize: 20),
+        style: const TextStyle(fontSize: 20, color: Colors.white),
         decoration: InputDecoration(
           labelText: labelText,
-          labelStyle: const TextStyle(fontSize: 18),
+          labelStyle: const TextStyle(fontSize: 18, color: Colors.white, fontWeight: FontWeight.bold),
           border: InputBorder.none,
         ),
       ),
