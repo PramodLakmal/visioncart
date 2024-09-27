@@ -3,8 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:visioncart/Login%20SignUp/Widget/button.dart';
 import 'package:visioncart/Login%20With%20Google/google_auth.dart';
 import 'package:visioncart/Password%20Forgot/forgot_password.dart';
-import 'package:visioncart/Phone%20Auth/phone_login.dart';
 import '../Services/authentication.dart';
+import '../Services/fingerprint_auth.dart';
 import '../Widget/snackbar.dart';
 import '../Widget/text_field.dart';
 import 'admin_dashboard.dart';
@@ -24,6 +24,8 @@ class _SignupScreenState extends State<LoginScreen> {
   final TextEditingController passwordController = TextEditingController();
   bool isLoading = false;
 
+  FingerprintAuth _fingerprintAuth = FingerprintAuth(); // Instantiate the FingerprintAuth class
+
   @override
   void dispose() {
     super.dispose();
@@ -31,30 +33,62 @@ class _SignupScreenState extends State<LoginScreen> {
     passwordController.dispose();
   }
 
-// email and passowrd auth part
+  // Email and password authentication part
   void loginUser() async {
     setState(() {
       isLoading = true;
     });
-    // signup user using our authmethod
+    // Sign up user using our auth method
     String res = await AuthMethod().loginUser(
         email: emailController.text, password: passwordController.text);
 
     if (res == "admin") {
-  Navigator.of(context).pushReplacement(
-    MaterialPageRoute(
-      builder: (context) => const AdminDashboard(),  // Admin screen
-    ),
-  );
-} else if (res == "user") {
-  Navigator.of(context).pushReplacement(
-    MaterialPageRoute(
-      builder: (context) => const HomeScreen(),  // User screen
-    ),
-  );
-} else {
-  showSnackBar(context, res);  // Show any error messages
-}
+      Navigator.of(context).pushReplacement(
+        MaterialPageRoute(
+          builder: (context) => const AdminDashboard(), // Admin screen
+        ),
+      );
+    } else if (res == "user") {
+      Navigator.of(context).pushReplacement(
+        MaterialPageRoute(
+          builder: (context) => const HomeScreen(), // User screen
+        ),
+      );
+    } else {
+      showSnackBar(context, res); // Show any error messages
+    }
+  }
+
+  // Fingerprint login method
+  void handleFingerprintLogin() async {
+    bool isAuthenticated = await _fingerprintAuth.authenticate();
+    if (isAuthenticated) {
+      // User is authenticated, check their role
+      User? currentUser = FirebaseAuth.instance.currentUser;
+      if (currentUser != null) {
+        DocumentSnapshot snapshot = await FirebaseFirestore.instance
+            .collection('users')
+            .doc(currentUser.uid)
+            .get();
+
+        Map<String, dynamic>? data = snapshot.data() as Map<String, dynamic>?;
+        if (data != null && data['isAdmin'] == true) {
+          // Navigate to admin dashboard
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(builder: (context) => const AdminDashboard()),
+          );
+        } else {
+          // Navigate to user home screen
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(builder: (context) => const HomeScreen()),
+          );
+        }
+      }
+    } else {
+      showSnackBar(context, "Fingerprint authentication failed.");
+    }
   }
 
   @override
@@ -62,145 +96,164 @@ class _SignupScreenState extends State<LoginScreen> {
     double height = MediaQuery.of(context).size.height;
     return Scaffold(
       resizeToAvoidBottomInset: false,
-      backgroundColor: Colors.white,
+      backgroundColor: Colors.black,
       body: SafeArea(
-          child: SizedBox(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            SizedBox(
-              height: height / 2.7,
-              child: Image.network('https://firebasestorage.googleapis.com/v0/b/visioncart-5e1b8.appspot.com/o/Login%20and%20SignUp%2FUntitled%20design%20(12).jpg?alt=media&token=52037aa3-ffe9-4e95-ac8d-1fc22ff6f344'),
-            ),
-            TextFieldInput(
-                icon: Icons.person,
-                textEditingController: emailController,
-                hintText: 'Enter your email',
-                textInputType: TextInputType.text),
-            TextFieldInput(
-              icon: Icons.lock,
-              textEditingController: passwordController,
-              hintText: 'Enter your password',
-              textInputType: TextInputType.text,
-              isPass: true,
-            ),
-            //  we call our forgot password below the login in button
-            const ForgotPassword(),
-            MyButtons(onTap: loginUser, text: "Log In"),
-
-            Row(
-              children: [
-                Expanded(
-                  child: Container(height: 1, color: Colors.black26),
-                ),
-                const Text("  or  "),
-                Expanded(
-                  child: Container(height: 1, color: Colors.black26),
-                )
-              ],
-            ),
-            // for google login
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 25, vertical: 10),
-              child: ElevatedButton(
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: const Color.fromARGB(255, 183, 213, 228),
-                  elevation: 5, // Adds shadow effect
-                  shape: RoundedRectangleBorder(
-                    borderRadius:
-                        BorderRadius.circular(12), // Optional: Rounded corners
-                  ),
-                ),
-                onPressed: () async {
-                String result = await FirebaseServices().signInWithGoogle();
-                
-                if (result == "success") {
-                  // Check if the user is an admin or normal user
-                  User? currentUser = FirebaseAuth.instance.currentUser;
-                  if (currentUser != null) {
-                    DocumentSnapshot snapshot = await FirebaseFirestore.instance
-                        .collection('users')
-                        .doc(currentUser.uid)
-                        .get();
-                    
-                    Map<String, dynamic>? data = snapshot.data() as Map<String, dynamic>?;
-                    if (data != null && data['isAdmin'] == true) {
-                      // Navigate to admin dashboard
-                      Navigator.pushReplacement(
-                        context,
-                        MaterialPageRoute(builder: (context) => const AdminDashboard()),
-                      );
-                    } else {
-                      // Navigate to user home screen
-                      Navigator.pushReplacement(
-                        context,
-                        MaterialPageRoute(builder: (context) => const HomeScreen()),
-                      );
-                    }
-                    }
-                  } else {
-                    // Show error message
-                    showSnackBar(context, result);
-                  }
-                },
-
-
-                child: Center(
-                  child: Row(
-                    mainAxisAlignment:
-                        MainAxisAlignment.center, // Centers the icon and text
-                    children: [
-                      Padding(
-                        padding: const EdgeInsets.symmetric(vertical: 8),
-                        child: Image.network(
-                          "https://firebasestorage.googleapis.com/v0/b/visioncart-5e1b8.appspot.com/o/Login%20and%20SignUp%2Fpngwing.com.png?alt=media&token=109f22c6-d0ed-4265-a5d3-c5c04ecf7b14",
-                          height: 35,
-                        ),
-                      ),
-                      const SizedBox(width: 10),
-                      const Text(
-                        "Continue with Google",
-                        style: TextStyle(
-                          fontWeight: FontWeight.bold,
-                          fontSize: 20,
-                          color: Colors.white,
-                        ),
-                      ),
-                    ],
-                  ),
+        child: SizedBox(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              SizedBox(
+                height: height / 2.7,
+                child: Image.network(
+                  'https://firebasestorage.googleapis.com/v0/b/visioncart-5e1b8.appspot.com/o/Login%20and%20SignUp%2FUntitled%20design%20(12).jpg?alt=media&token=52037aa3-ffe9-4e95-ac8d-1fc22ff6f344',
                 ),
               ),
-            ),
+              TextFieldInput(
+                  icon: Icons.person,
+                  textEditingController: emailController,
+                  hintText: 'Enter your email',
+                  textInputType: TextInputType.text),
+              TextFieldInput(
+                icon: Icons.lock,
+                textEditingController: passwordController,
+                hintText: 'Enter your password',
+                textInputType: TextInputType.text,
+                isPass: true,
+              ),
+              const ForgotPassword(),
+              MyButtons(onTap: loginUser, text: "Log In"),
 
-            // for phone authentication
-            const PhoneAuthentication(),
-            // Don't have an account? got to signup screen
-            Padding(
-              padding: const EdgeInsets.only(top: 10),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
+              Row(
                 children: [
-                  const Text("Don't have an account? "),
-                  GestureDetector(
-                    onTap: () {
-                      Navigator.of(context).push(
-                        MaterialPageRoute(
-                          builder: (context) => const SignupScreen(),
-                        ),
-                      );
-                    },
-                    child: const Text(
-                      "SignUp",
-                      style: TextStyle(
-                          fontWeight: FontWeight.bold, color: Colors.blue),
-                    ),
+                  Expanded(
+                    child: Container(height: 1, color: Colors.white),
+                  ),
+                  const Text("  or  ", style: TextStyle(color: Colors.white)),
+                  Expanded(
+                    child: Container(height: 1, color: Colors.white),
                   )
                 ],
               ),
-            ),
-          ],
+
+              // Google login button
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 25, vertical: 10),
+                child: ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.black,
+                    side: const BorderSide(color: Colors.white, width: 2),
+                    elevation: 5,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                  ),
+                  onPressed: () async {
+                    String result = await FirebaseServices().signInWithGoogle();
+
+                    if (result == "success") {
+                      User? currentUser = FirebaseAuth.instance.currentUser;
+                      if (currentUser != null) {
+                        DocumentSnapshot snapshot = await FirebaseFirestore.instance
+                            .collection('users')
+                            .doc(currentUser.uid)
+                            .get();
+
+                        Map<String, dynamic>? data = snapshot.data() as Map<String, dynamic>?;
+                        if (data != null && data['isAdmin'] == true) {
+                          Navigator.pushReplacement(
+                            context,
+                            MaterialPageRoute(builder: (context) => const AdminDashboard()),
+                          );
+                        } else {
+                          Navigator.pushReplacement(
+                            context,
+                            MaterialPageRoute(builder: (context) => const HomeScreen()),
+                          );
+                        }
+                      }
+                    } else {
+                      showSnackBar(context, result);
+                    }
+                  },
+                  child: Center(
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Padding(
+                          padding: const EdgeInsets.symmetric(vertical: 8),
+                          child: Image.network(
+                            "https://firebasestorage.googleapis.com/v0/b/visioncart-5e1b8.appspot.com/o/Login%20and%20SignUp%2Fpngwing.com.png?alt=media&token=109f22c6-d0ed-4265-a5d3-c5c04ecf7b14",
+                            height: 35,
+                          ),
+                        ),
+                        const SizedBox(width: 10),
+                        const Text(
+                          "Continue with Google",
+                          style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            fontSize: 20,
+                            color: Colors.white,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+
+              // Fingerprint sign-in button
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 25, vertical: 10),
+                child: ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.black,
+                    side: const BorderSide(color: Colors.white, width: 2),
+                    elevation: 5,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                  ),
+                  onPressed: handleFingerprintLogin,
+                  child: const Text(
+                    "Sign in with Fingerprint",
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 20,
+                      color: Colors.white,
+                    ),
+                  ),
+                ),
+              ),
+
+              // Can Add Phone login button
+
+              Padding(
+                padding: const EdgeInsets.only(top: 10),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    const Text("Don't have an account? ", style: TextStyle(color: Colors.white, fontSize: 16)),
+                    GestureDetector(
+                      onTap: () {
+                        Navigator.of(context).push(
+                          MaterialPageRoute(
+                            builder: (context) => const SignupScreen(),
+                          ),
+                        );
+                      },
+                      child: const Text(
+                        "SignUp",
+                        style: TextStyle(
+                            fontWeight: FontWeight.bold, color: Colors.white, fontSize: 18),
+                      ),
+                    )
+                  ],
+                ),
+              ),
+            ],
+          ),
         ),
-      )),
+      ),
     );
   }
 

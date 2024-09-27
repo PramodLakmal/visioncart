@@ -18,7 +18,8 @@ class _PhoneAuthenticationState extends State<PhoneAuthentication> {
             padding: const EdgeInsets.symmetric(horizontal: 25, vertical: 10),
             child: ElevatedButton(
               style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.green,
+                backgroundColor: Colors.black,
+                side: const BorderSide(color: Colors.white, width: 2),
                 elevation: 5, // Adds a subtle shadow for better UI
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(12), // Optional rounded corners

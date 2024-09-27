@@ -96,6 +96,7 @@ class _SignupScreenState extends State<SignupScreen> {
     double height = MediaQuery.of(context).size.height;
     return Scaffold(
       resizeToAvoidBottomInset: false,
+      backgroundColor: Colors.black,
       body: SafeArea(
           child: SizedBox(
         child: Column(
@@ -130,7 +131,7 @@ class _SignupScreenState extends State<SignupScreen> {
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                const Text("Already have an account?"),
+                const Text("Already have an account?", style: TextStyle(color: Colors.white, fontSize: 16)),
                 GestureDetector(
                   onTap: () {
                     Navigator.of(context).push(
@@ -141,7 +142,7 @@ class _SignupScreenState extends State<SignupScreen> {
                   },
                   child: const Text(
                     " Login",
-                    style: TextStyle(fontWeight: FontWeight.bold , color: Colors.blue),
+                    style: TextStyle(fontWeight: FontWeight.bold , color: Colors.white, fontSize: 18),
                   ),
                 )
               ],

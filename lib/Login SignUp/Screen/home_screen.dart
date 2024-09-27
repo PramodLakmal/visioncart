@@ -40,7 +40,8 @@ class _HomeScreenState extends State<HomeScreen> {
             letterSpacing: 1.2,
           ),
         ),
-        backgroundColor: const Color.fromRGBO(33, 150, 243, 1),
+        backgroundColor: Colors.black87,
+        foregroundColor: Colors.white,
         elevation: 4,
       ),
       body: selectedIndex == 0
