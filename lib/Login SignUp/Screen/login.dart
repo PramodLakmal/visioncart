@@ -62,7 +62,7 @@ class _SignupScreenState extends State<LoginScreen> {
     double height = MediaQuery.of(context).size.height;
     return Scaffold(
       resizeToAvoidBottomInset: false,
-      backgroundColor: Colors.white,
+      backgroundColor: Colors.black,
       body: SafeArea(
           child: SizedBox(
         child: Column(
@@ -104,7 +104,8 @@ class _SignupScreenState extends State<LoginScreen> {
               padding: const EdgeInsets.symmetric(horizontal: 25, vertical: 10),
               child: ElevatedButton(
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: const Color.fromARGB(255, 183, 213, 228),
+                  backgroundColor: Colors.black,
+                  side: const BorderSide(color: Colors.white, width: 2),
                   elevation: 5, // Adds shadow effect
                   shape: RoundedRectangleBorder(
                     borderRadius:
@@ -180,7 +181,7 @@ class _SignupScreenState extends State<LoginScreen> {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  const Text("Don't have an account? "),
+                  const Text("Don't have an account? ", style: TextStyle(color: Colors.white, fontSize: 16)),
                   GestureDetector(
                     onTap: () {
                       Navigator.of(context).push(
@@ -192,7 +193,7 @@ class _SignupScreenState extends State<LoginScreen> {
                     child: const Text(
                       "SignUp",
                       style: TextStyle(
-                          fontWeight: FontWeight.bold, color: Colors.blue),
+                          fontWeight: FontWeight.bold, color: Colors.white, fontSize: 18),
                     ),
                   )
                 ],
