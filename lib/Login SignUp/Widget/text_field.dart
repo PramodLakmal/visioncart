@@ -39,7 +39,7 @@ class TextFieldInput extends StatelessWidget {
               decoration: InputDecoration(
                 prefixIcon: Icon(icon, color: Colors.white),
                 hintText: hintText,
-                hintStyle: const TextStyle(color: Colors.white, fontSize: 18),
+                hintStyle: const TextStyle(color: Colors.white, fontSize: 20),
                 enabledBorder: OutlineInputBorder(
                   borderSide: BorderSide.none,
                   borderRadius: BorderRadius.circular(30),
