@@ -84,34 +84,34 @@ class _ProfilePageState extends State<EditProfile> {
   }
 
   Future<void> deleteUserProfile() async {
-    try {
-      if (user != null) {
-        // Delete user data from Firestore
-        await FirebaseFirestore.instance
-            .collection('users')
-            .doc(user!.uid)
-            .delete();
+  try {
+    if (user != null) {
+      // Delete user data from Firestore
+      await FirebaseFirestore.instance
+          .collection('users')
+          .doc(user!.uid)
+          .delete();
 
-        // Delete the user from FirebaseAuth
-        await user!.delete();
+      // Delete the user from FirebaseAuth
+      await user!.delete();
 
-        // Sign out the user after deletion
-        await FirebaseAuth.instance.signOut();
+      // Sign out the user after deletion
+      await FirebaseAuth.instance.signOut();
 
-        // Navigate back to login or another page
-        Navigator.of(context).pushReplacement(
-          MaterialPageRoute(
-              builder: (context) =>
-                  const LoginScreen()), // Ensure you have LoginScreen imported
-        );
-      }
-    } catch (e) {
-      // Handle error, such as when trying to delete the user but re-authentication is required
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Error deleting profile: $e')),
+      // Navigate back to login or another page
+      Navigator.of(context).pushReplacement(
+        MaterialPageRoute(
+            builder: (context) =>
+                const LoginScreen()), // Ensure you have LoginScreen imported
       );
     }
+  } catch (e) {
+    // Handle errors like re-authentication failure
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text('Error deleting profile: $e')),
+    );
   }
+}
 
   @override
   Widget build(BuildContext context) {
@@ -194,7 +194,7 @@ class _ProfilePageState extends State<EditProfile> {
                   }
                 },
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.black87, // Red color for delete button
+                  backgroundColor: Colors.black87, // delete button
                   padding:
                       const EdgeInsets.symmetric(horizontal: 50, vertical: 15),
                   foregroundColor: Colors.white,

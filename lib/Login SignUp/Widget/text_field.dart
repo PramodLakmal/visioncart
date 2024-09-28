@@ -34,7 +34,7 @@ class TextFieldInput extends StatelessWidget {
               ],
             ),
             child: TextField(
-              style: const TextStyle(fontSize: 20),
+              style: const TextStyle(fontSize: 22, color: Colors.white, fontWeight: FontWeight.bold),
               controller: textEditingController,
               decoration: InputDecoration(
                 prefixIcon: Icon(icon, color: Colors.white),
