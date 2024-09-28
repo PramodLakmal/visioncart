@@ -150,14 +150,15 @@ class _HomeScreenState extends State<HomeScreen> {
           ),
         ],
         currentIndex: selectedIndex,
-        selectedItemColor: const Color.fromARGB(255, 33, 150, 243),
-        unselectedItemColor: Colors.grey,
+        selectedItemColor: Colors.yellowAccent,
+        unselectedItemColor: Colors.white,
         selectedLabelStyle:
-            const TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
+            const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
         unselectedLabelStyle: const TextStyle(fontSize: 12),
         onTap: _onItemTapped,
         type: BottomNavigationBarType.fixed,
-        elevation: 10,
+        elevation: 12,
+        backgroundColor: Colors.black87,
       ),
     );
   }
