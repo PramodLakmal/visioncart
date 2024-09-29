@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-
+import '../../Password Forgot/admin_forgot_password.dart';
 import 'admin_dashboard.dart'; // Web-based admin dashboard
 import 'home_screen.dart'; // Mobile user dashboard
 
@@ -163,7 +163,10 @@ class _AdminLoginState extends State<AdminLogin> {
                           // Forgot Password (Optional)
                           TextButton(
                             onPressed: () {
-                              // Add forgot password logic here
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(builder: (context) => const AdminForgotPassword()),
+                              );   
                             },
                             child: const Text(
                               'Forgot Password?',
