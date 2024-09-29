@@ -1,8 +1,7 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:visioncart/cart/screens/cartScreen.dart';
 import 'package:visioncart/cart/screens/orderScreen.dart';
-import 'item_list_page.dart';
+import '../../items/screens/item_list_page.dart';
 import 'profile_page.dart';
 import 'chat_screen.dart';
 
@@ -41,7 +40,8 @@ class _HomeScreenState extends State<HomeScreen> {
             letterSpacing: 1.2,
           ),
         ),
-        backgroundColor: const Color.fromRGBO(33, 150, 243, 1),
+        backgroundColor: Colors.black87,
+        foregroundColor: Colors.white,
         elevation: 4,
       ),
       body: selectedIndex == 0
@@ -105,7 +105,7 @@ class _HomeScreenState extends State<HomeScreen> {
                         context,
                         MaterialPageRoute(
                             builder: (context) =>
-                                ChatScreen()), // Navigate to voice interaction
+                                const ChatScreen()), // Navigate to voice interaction
                       );
                     },
                     style: ElevatedButton.styleFrom(
@@ -150,14 +150,15 @@ class _HomeScreenState extends State<HomeScreen> {
           ),
         ],
         currentIndex: selectedIndex,
-        selectedItemColor: const Color.fromARGB(255, 33, 150, 243),
-        unselectedItemColor: Colors.grey,
+        selectedItemColor: Colors.yellowAccent,
+        unselectedItemColor: Colors.white,
         selectedLabelStyle:
-            const TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
+            const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
         unselectedLabelStyle: const TextStyle(fontSize: 12),
         onTap: _onItemTapped,
         type: BottomNavigationBarType.fixed,
-        elevation: 10,
+        elevation: 12,
+        backgroundColor: Colors.black87,
       ),
     );
   }

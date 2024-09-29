@@ -24,12 +24,12 @@ class MyButtons extends StatelessWidget {
                   Radius.circular(30),
                 ),
               ),
-              color: Colors.blue),
+              color: Colors.white),
           child: Text(
             text,
             style: const TextStyle(
               fontSize: 20,
-              color: Colors.white,
+              color: Colors.black,
               fontWeight: FontWeight.bold,
             ),
           ),

@@ -26,8 +26,8 @@ class _ForgotPasswordState extends State<ForgotPassword> {
             "Forgot Password?",
             style: TextStyle(
               fontWeight: FontWeight.bold,
-              fontSize: 16,
-              color: Colors.blue,
+              fontSize: 18,
+              color: Colors.white,
             ),
           ),
         ),
@@ -45,7 +45,7 @@ class _ForgotPasswordState extends State<ForgotPassword> {
             ),
             child: Container(
               decoration: BoxDecoration(
-                color: Colors.white,
+                color: Colors.black,
                 borderRadius: BorderRadius.circular(20),
               ),
               padding: const EdgeInsets.all(20),
@@ -60,7 +60,8 @@ class _ForgotPasswordState extends State<ForgotPassword> {
                         "Forgot Your Password",
                         style: TextStyle(
                           fontWeight: FontWeight.bold,
-                          fontSize: 18,
+                          fontSize: 20,
+                          color: Colors.white,
                         ),
                       ),
                       IconButton(
@@ -73,7 +74,9 @@ class _ForgotPasswordState extends State<ForgotPassword> {
                   ),
                   const SizedBox(height: 20),
                   TextField(
+                    style: const TextStyle(color: Colors.white, fontSize: 20, fontWeight: FontWeight.bold),
                     controller: emailController,
+                    keyboardType: TextInputType.emailAddress,
                     decoration: const InputDecoration(
                       border: OutlineInputBorder(),
                       labelText: "Enter the Email",
@@ -83,7 +86,7 @@ class _ForgotPasswordState extends State<ForgotPassword> {
                   const SizedBox(height: 20),
                   ElevatedButton(
                     style:
-                        ElevatedButton.styleFrom(backgroundColor: const Color.fromRGBO(33, 150, 243, 1)),
+                        ElevatedButton.styleFrom(backgroundColor: Colors.black, side: const BorderSide(color: Colors.white, width: 2),),
                     onPressed: () async {
                       await auth
                           .sendPasswordResetEmail(email: emailController.text)
@@ -107,7 +110,7 @@ class _ForgotPasswordState extends State<ForgotPassword> {
                       "Send",
                       style: TextStyle(
                         fontWeight: FontWeight.bold,
-                        fontSize: 16,
+                        fontSize: 18,
                         color: Colors.white,
                       ),
                     ),

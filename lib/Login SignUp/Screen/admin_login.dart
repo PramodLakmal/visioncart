@@ -1,11 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'dart:ui'; // Import for using the BackdropFilter
-
-import 'admin_dashboard.dart';  // Web-based admin dashboard
-import 'home_screen.dart';  // Mobile user dashboard
+import '../../Password Forgot/admin_forgot_password.dart';
+import 'admin_dashboard.dart'; // Web-based admin dashboard
+import 'home_screen.dart'; // Mobile user dashboard
 
 class AdminLogin extends StatefulWidget {
   const AdminLogin({super.key});
@@ -43,19 +41,22 @@ class _AdminLoginState extends State<AdminLogin> {
         bool isAdmin = doc.exists && doc.get('isAdmin') == true;
 
         // If running on web, only allow admin login
-        if (kIsWeb && !isAdmin) {
-          showSnackBar(context, 'Only admins can log in on the web.');
+        if (isAdmin) {
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(builder: (context) => AdminDashboard()),  // Web Admin Dashboard
+          );
         } else {
           // Navigate to respective dashboard
           if (isAdmin) {
             Navigator.pushReplacement(
               context,
-              MaterialPageRoute(builder: (context) => AdminDashboard()),  // Web Admin Dashboard
+              MaterialPageRoute(builder: (context) => const AdminDashboard()),  // Web Admin Dashboard
             );
           } else {
             Navigator.pushReplacement(
               context,
-              MaterialPageRoute(builder: (context) => HomeScreen()),  // Mobile User Home
+              MaterialPageRoute(builder: (context) => const HomeScreen()),  // Mobile User Home
             );
           }
         }
@@ -72,112 +73,115 @@ class _AdminLoginState extends State<AdminLogin> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Stack(
-        children: [
-          // Background Image with Blur Effect
-          Positioned.fill(
-            child: Stack(
-              fit: StackFit.expand,
-              children: [
-                Image.network(
-                  'https://www.travelperk.com/wp-content/uploads/The-ultimate-guide-to-administrative-tasks-and-duties.png',
-                  fit: BoxFit.cover,
-                ),
-                BackdropFilter(
-                  filter: ImageFilter.blur(sigmaX: 10.0, sigmaY: 10.0),
-                  child: Container(
-                    color: Colors.black.withOpacity(0.2), // Make the blur effect visible
-                  ),
-                ),
-              ],
+      body: Center(
+        child: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Card(
+            elevation: 10,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(20),
             ),
-          ),
-          Center(
-            child: Padding(
-              padding: const EdgeInsets.all(16.0),
-              child: Card(
-                elevation: 10,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(20),
-                ),
-                child: Container(
-                  padding: const EdgeInsets.all(32),
-                  width: 400,  // Adjust width as per requirement
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    crossAxisAlignment: CrossAxisAlignment.stretch,
-                    children: [
-                      // Login Title
-                      Text(
-                        'VisionCart Admin Login',
-                        style: Theme.of(context).textTheme.headlineMedium?.copyWith(
-                              fontWeight: FontWeight.bold,
-                              color: Colors.blueAccent,
-                            ),
-                        textAlign: TextAlign.center,
-                      ),
-                      const SizedBox(height: 20),
-                      // Email Input
-                      TextField(
-                        controller: emailController,
-                        decoration: InputDecoration(
-                          labelText: 'Email',
-                          border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(10),
-                          ),
-                          filled: true,
-                          fillColor: Colors.white,
-                        ),
-                      ),
-                      const SizedBox(height: 10),
-                      // Password Input
-                      TextField(
-                        controller: passwordController,
-                        decoration: InputDecoration(
-                          labelText: 'Password',
-                          border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(10),
-                          ),
-                          filled: true,
-                          fillColor: Colors.white,
-                        ),
-                        obscureText: true,
-                      ),
-                      const SizedBox(height: 20),
-                      // Login Button
-                      ElevatedButton(
-                        onPressed: loginUser,
-                        style: ElevatedButton.styleFrom(
-                          padding: const EdgeInsets.symmetric(vertical: 15),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(10),
-                          ),
-                        ),
-                        child: isLoading
-                            ? const CircularProgressIndicator(color: Color.fromARGB(255, 170, 203, 209))
-                            : const Text(
-                                'Login',
-                                style: TextStyle(fontSize: 18),
-                              ),
-                      ),
-                      const SizedBox(height: 10),
-                      // Forgot Password (Optional)
-                      TextButton(
-                        onPressed: () {
-                          // Add forgot password logic here
-                        },
-                        child: const Text(
-                          'Forgot Password?',
-                          style: TextStyle(color: Colors.blueAccent),
-                        ),
-                      ),
-                    ],
+            child: SizedBox(
+              height: 500, // Adjust height based on your preference
+              width: 900,  // Adjust width based on your preference
+              child: Row(
+                children: [
+                  // Left side: Image
+                  Expanded(
+                    child: Image.network(
+                      'https://firebasestorage.googleapis.com/v0/b/visioncart-5e1b8.appspot.com/o/Login%20and%20SignUp%2FVisionCart%20Logo.png?alt=media&token=45f2e245-c250-4336-a782-cad91d6b2618',
+                      width: 400,
+                      height: 400,
+                    ),
                   ),
-                ),
+
+                  // Right side: Login Form
+                  Expanded(
+                    child: Padding(
+                      padding: const EdgeInsets.all(32.0),
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        crossAxisAlignment: CrossAxisAlignment.stretch,
+                        children: [
+                          // Login Title
+                          Text(
+                            'VisionCart Admin Login',
+                            style: Theme.of(context).textTheme.headlineMedium?.copyWith(
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.blueAccent,
+                                  fontSize: 30,
+                                ),
+                            textAlign: TextAlign.center,
+                          ),
+                          const SizedBox(height: 30),
+                          // Email Input
+                          TextField(
+                            controller: emailController,
+                            decoration: InputDecoration(
+                              labelText: 'Email',
+                              border: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(10),
+                              ),
+                              filled: true,
+                              fillColor: Colors.white,
+                            ),
+                          ),
+                          const SizedBox(height: 10),
+                          // Password Input
+                          TextField(
+                            controller: passwordController,
+                            decoration: InputDecoration(
+                              labelText: 'Password',
+                              border: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(10),
+                              ),
+                              filled: true,
+                              fillColor: Colors.white,
+                            ),
+                            obscureText: true,
+                          ),
+                          const SizedBox(height: 20),
+                          // Login Button
+                          ElevatedButton(
+                            onPressed: loginUser,
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: Colors.blueAccent,
+                              foregroundColor: Colors.white,
+                              padding: const EdgeInsets.symmetric(vertical: 15),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(10),
+                              ),
+                            ),
+                            child: isLoading
+                                ? const CircularProgressIndicator(color: Color.fromARGB(255, 170, 203, 209))
+                                : const Text(
+                                    'Login',
+                                    style: TextStyle(fontSize: 18),
+                                  ),
+                          ),
+                          const SizedBox(height: 10),
+                          // Forgot Password (Optional)
+                          TextButton(
+                            onPressed: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(builder: (context) => const AdminForgotPassword()),
+                              );   
+                            },
+                            child: const Text(
+                              'Forgot Password?',
+                              style: TextStyle(color: Colors.blueAccent),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ],
               ),
             ),
           ),
-        ],
+        ),
       ),
     );
   }

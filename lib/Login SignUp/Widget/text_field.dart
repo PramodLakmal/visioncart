@@ -34,12 +34,12 @@ class TextFieldInput extends StatelessWidget {
               ],
             ),
             child: TextField(
-              style: const TextStyle(fontSize: 20),
+              style: const TextStyle(fontSize: 22, color: Colors.white, fontWeight: FontWeight.bold),
               controller: textEditingController,
               decoration: InputDecoration(
-                prefixIcon: Icon(icon, color: Colors.black54),
+                prefixIcon: Icon(icon, color: Colors.white),
                 hintText: hintText,
-                hintStyle: const TextStyle(color: Colors.black45, fontSize: 18),
+                hintStyle: const TextStyle(color: Colors.white, fontSize: 20),
                 enabledBorder: OutlineInputBorder(
                   borderSide: BorderSide.none,
                   borderRadius: BorderRadius.circular(30),
@@ -50,7 +50,7 @@ class TextFieldInput extends StatelessWidget {
                   borderRadius: BorderRadius.circular(30),
                 ),
                 filled: true,
-                fillColor: Colors.white,
+                fillColor: Colors.black,
                 contentPadding: const EdgeInsets.symmetric(
                   vertical: 15,
                   horizontal: 20,

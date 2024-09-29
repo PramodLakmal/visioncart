@@ -89,9 +89,9 @@ class _OrdersState extends State<Orders> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       // Main Title
-                      Text(
+                      const Text(
                         'Your Order',
-                        style: const TextStyle(
+                        style: TextStyle(
                           fontSize: 20,
                           fontWeight: FontWeight.bold,
                         ),
@@ -113,9 +113,9 @@ class _OrdersState extends State<Orders> {
                       const SizedBox(height: 10),
 
                       // Table Header
-                      Row(
+                      const Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: const [
+                        children: [
                           Expanded(child: Text('Item Name')),
                           Expanded(child: Text('Quantity')),
                           Expanded(child: Text('Unit Price')),

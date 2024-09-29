@@ -117,55 +117,79 @@ class _UserManagementState extends State<UserManagement> {
   }
 
   Widget _buildUserTable(BuildContext context) {
-    return StreamBuilder(
-      stream: FirebaseFirestore.instance.collection('users').snapshots(),
-      builder: (context, AsyncSnapshot<QuerySnapshot> snapshot) {
-        if (snapshot.connectionState == ConnectionState.waiting) {
-          return const Center(child: CircularProgressIndicator());
-        }
+      return StreamBuilder(
+        stream: FirebaseFirestore.instance.collection('users').snapshots(),
+        builder: (context, AsyncSnapshot<QuerySnapshot> snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return const Center(child: CircularProgressIndicator());
+          }
 
-        if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
-          return const Center(child: Text('No users found.'));
-        }
+          if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
+            return const Center(child: Text('No users found.'));
+          }
 
-        // Filter users based on search query
-        var filteredUsers = _filterUsers(snapshot.data!.docs);
+          // Filter users based on search query
+          var filteredUsers = _filterUsers(snapshot.data!.docs);
 
-        // DataTable for large screens
-        return DataTable(
-          columns: const [
-            DataColumn(label: Text('Name')),
-            DataColumn(label: Text('Email')),
-            DataColumn(label: Text('Role')),
-            DataColumn(label: Text('Actions')),
-          ],
-          rows: filteredUsers.map((doc) {
-            var data = doc.data() as Map<String, dynamic>;
-            return DataRow(cells: [
-              DataCell(Text(data['name'] ?? 'Unknown')),
-              DataCell(Text(data['email'] ?? 'Unknown')),
-              DataCell(Text(data['isAdmin'] ? 'Admin' : 'User')),
-              DataCell(Row(
-                children: [
-                  IconButton(
-                    icon: const Icon(Icons.edit),
-                    onPressed: () {
-                      _showEditUserDialog(context, data, doc.id);
-                    },
+          // DataTable for large screens
+          return DataTable(
+            columns: const [
+              DataColumn(
+                label: Expanded(
+                  child: Center(
+                    child: Text('Name', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
                   ),
-                  IconButton(
-                    icon: const Icon(Icons.delete, color: Colors.red),
-                    onPressed: () {
-                      _showDeleteConfirmationDialog(context, doc.id);
-                    },
+                ),
+              ),
+              DataColumn(
+                label: Expanded(
+                  child: Center(
+                    child: Text('Email', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
                   ),
-                ],
-              )),
-            ]);
-          }).toList(),
-        );
-      },
-    );
+                ),
+              ),
+              DataColumn(
+                label: Expanded(
+                  child: Center(
+                    child: Text('Role', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
+                  ),
+                ),
+              ),
+              DataColumn(
+                label: Expanded(
+                  child: Center(
+                    child: Text('Actions', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
+                  ),
+                ),
+              ),
+            ],
+            rows: filteredUsers.map((doc) {
+              var data = doc.data() as Map<String, dynamic>;
+              return DataRow(cells: [
+                DataCell(Center(child: Text(data['name'] ?? 'Unknown'))),
+                DataCell(Center(child: Text(data['email'] ?? 'Unknown'))),
+                DataCell(Center(child: Text(data['isAdmin'] ? 'Admin' : 'User'))),
+                DataCell(Row(
+                  children: [
+                    IconButton(
+                      icon: const Icon(Icons.edit),
+                      onPressed: () {
+                        _showEditUserDialog(context, data, doc.id);
+                      },
+                    ),
+                    IconButton(
+                      icon: const Icon(Icons.delete, color: Colors.red),
+                      onPressed: () {
+                        _showDeleteConfirmationDialog(context, doc.id);
+                      },
+                    ),
+                  ],
+                )),
+              ]);
+            }).toList(),
+          );
+        },
+      );
   }
 
   Widget _buildUserList(BuildContext context) {
@@ -256,67 +280,75 @@ class _UserManagementState extends State<UserManagement> {
 
   // User edit dialog (as in your previous code)
   void _showEditUserDialog(BuildContext context, Map<String, dynamic> data, String userId) {
-    // TextEditingControllers for user details
-    TextEditingController nameController = TextEditingController(text: data['name']);
-    TextEditingController emailController = TextEditingController(text: data['email']);
-    bool isAdmin = data['isAdmin'] ?? false;
+  // TextEditingControllers for user details
+  TextEditingController nameController = TextEditingController(text: data['name']);
+  TextEditingController emailController = TextEditingController(text: data['email']);
+  bool isAdmin = data['isAdmin'] ?? false;  // Get the admin status from the data
 
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: const Text('Edit User'),
-          content: Column(
-            mainAxisSize: MainAxisSize.min, // Ensures the dialog resizes based on content
-            children: [
-              // Name input field
-              TextField(
-                controller: nameController,
-                decoration: const InputDecoration(labelText: 'Name'),
+  showDialog(
+    context: context,
+    builder: (BuildContext context) {
+      return StatefulBuilder(
+        builder: (context, setState) {  // Manage the state within the dialog
+          return AlertDialog(
+            title: const Text('Edit User'),
+            content: Column(
+              mainAxisSize: MainAxisSize.min, // Ensures the dialog resizes based on content
+              children: [
+                // Name input field
+                TextField(
+                  controller: nameController,
+                  decoration: const InputDecoration(labelText: 'Name'),
+                ),
+                // Email input field
+                TextField(
+                  controller: emailController,
+                  decoration: const InputDecoration(labelText: 'Email'),
+                ),
+                // Checkbox for Admin status
+                Row(
+                  children: [
+                    const Text('Admin'),
+                    Checkbox(
+                      value: isAdmin,
+                      onChanged: (value) {
+                        // Update the state inside StatefulBuilder
+                        setState(() {
+                          isAdmin = value ?? false;  // Update the isAdmin flag when checkbox is tapped
+                        });
+                      },
+                    ),
+                  ],
+                ),
+              ],
+            ),
+            actions: [
+              TextButton(
+                onPressed: () {
+                  Navigator.of(context).pop(); // Close the dialog
+                },
+                child: const Text('Cancel'),
               ),
-              // Email input field
-              TextField(
-                controller: emailController,
-                decoration: const InputDecoration(labelText: 'Email'),
-              ),
-              // Checkbox for Admin status
-              Row(
-                children: [
-                  const Text('Admin'),
-                  Checkbox(
-                    value: isAdmin,
-                    onChanged: (value) {
-                      isAdmin = value ?? false;
-                    },
-                  ),
-                ],
+              TextButton(
+                onPressed: () async {
+                  // Handle update - update Firestore with new data
+                  await FirebaseFirestore.instance.collection('users').doc(userId).update({
+                    'name': nameController.text,
+                    'email': emailController.text,
+                    'isAdmin': isAdmin,  // Save the role as Admin or User
+                  });
+                  Navigator.of(context).pop(); // Close the dialog after saving
+                },
+                child: const Text('Save'),
               ),
             ],
-          ),
-          actions: [
-            TextButton(
-              onPressed: () {
-                Navigator.of(context).pop(); // Close the dialog
-              },
-              child: const Text('Cancel'),
-            ),
-            TextButton(
-              onPressed: () async {
-                // Handle update - update Firestore with new data
-                await FirebaseFirestore.instance.collection('users').doc(userId).update({
-                  'name': nameController.text,
-                  'email': emailController.text,
-                  'isAdmin': isAdmin,
-                });
-                Navigator.of(context).pop(); // Close the dialog after saving
-              },
-              child: const Text('Save'),
-            ),
-          ],
-        );
-      },
-    );
-  }
+          );
+        },
+      );
+    },
+  );
+}
+
 
   // User delete confirmation dialog
   void _showDeleteConfirmationDialog(BuildContext context, String userId) {

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'item_form.dart';
-import 'item_model.dart';
+import '../models/item_model.dart';
 
 class ItemManagement extends StatefulWidget {
   const ItemManagement({super.key});
@@ -14,7 +14,6 @@ class _ItemManagementState extends State<ItemManagement> {
   final TextEditingController _searchController = TextEditingController();
   String _searchQuery = '';
 
-  // Define the light blue color
   final Color lightBlue = const Color.fromRGBO(33, 150, 243, 1);
 
   @override
@@ -102,7 +101,7 @@ class _ItemManagementState extends State<ItemManagement> {
                           borderRadius: BorderRadius.circular(8.0),
                           child: Image.network(itemData['imageUrl'], width: 60, height: 60, fit: BoxFit.cover),
                         )
-                      :const Icon(Icons.image_not_supported, size: 60,  color: Colors.black),
+                      : const Icon(Icons.image_not_supported, size: 60, color: Colors.black),
                   title: Text(itemData['name'], style: const TextStyle(fontWeight: FontWeight.bold)),
                   subtitle: Text(
                     "\$${itemData['price']} (${itemData['quantity']} in stock)",

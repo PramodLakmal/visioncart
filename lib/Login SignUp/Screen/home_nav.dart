@@ -70,7 +70,7 @@ class _MyWidgetState extends State<MyWidget> {
           ),
         ],
         currentIndex: selectedIndex,
-        selectedItemColor: Colors.deepPurple,
+        selectedItemColor: Colors.blueAccent,
         unselectedItemColor: Colors.grey,
         backgroundColor: Colors.white,
         onTap: _onItemTapped,
