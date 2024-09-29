@@ -33,7 +33,7 @@ class ItemCard extends StatelessWidget {
       name: itemModel.name ?? 'Unnamed Item',
       description: itemModel.description ?? 'No description available',
       price: itemModel.price ?? 0.0,
-      quantity: itemModel.quantity?.toInt() ?? 1,
+      quantity: 1,
     );
   }
 
@@ -128,7 +128,7 @@ class ItemCard extends StatelessWidget {
                         name: name,
                         description: description,
                         price: price,
-                        quantity: quantity,
+                        quantity: 1,
                         imageUrl: imageUrl,
                       );
 
@@ -175,7 +175,7 @@ class ItemCard extends StatelessWidget {
                               name: name,
                               description: description,
                               price: price,
-                              quantity: quantity.toInt(),
+                              quantity: 1,
                               image: imageUrl,
                             ),
                           ),
