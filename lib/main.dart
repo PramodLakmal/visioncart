@@ -1,4 +1,3 @@
-import 'package:firebase_app_check/firebase_app_check.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
@@ -27,9 +26,6 @@ void main() async {
     } else {
       await Firebase.initializeApp();
     }
-
-    // Activate Firebase App Check
-    await FirebaseAppCheck.instance.activate();
     
     runApp(const MyApp());
   } catch (e) {
