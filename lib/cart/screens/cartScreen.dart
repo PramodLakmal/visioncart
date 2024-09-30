@@ -14,12 +14,14 @@ class Cart extends StatefulWidget {
 
 class _CartState extends State<Cart> {
   late Future<List<Item>> _cartItemsFuture;
-  final String userId = FirebaseAuth.instance.currentUser!.uid; // Get logged-in user's ID
+  final String userId =
+      FirebaseAuth.instance.currentUser!.uid; // Get logged-in user's ID
 
   @override
   void initState() {
     super.initState();
-    _cartItemsFuture = CartDatabase().fetchCartItems(userId); // Fetch items for the current user
+    _cartItemsFuture = CartDatabase()
+        .fetchCartItems(userId); // Fetch items for the current user
   }
 
   // Method to calculate grand total
@@ -35,7 +37,8 @@ class _CartState extends State<Cart> {
   void _updateQuantity(int index, int newQuantity, List<Item> cartItems) {
     setState(() {
       cartItems[index].quantity = newQuantity;
-      CartDatabase().updateItemQuantity(cartItems[index].id, userId, newQuantity);
+      CartDatabase()
+          .updateItemQuantity(cartItems[index].id, userId, newQuantity);
     });
   }
 
@@ -93,11 +96,13 @@ class _CartState extends State<Cart> {
                           minimumSize: const Size(200, 60),
                         ),
                         onPressed: () {
-                          double grandTotal = getGrandTotal(cartItems); // Get the total amount
+                          double grandTotal =
+                              getGrandTotal(cartItems); // Get the total amount
                           Navigator.push(
                             context,
                             MaterialPageRoute(
-                              builder: (context) => Checkout(grandTotal: grandTotal),
+                              builder: (context) =>
+                                  Checkout(grandTotal: grandTotal),
                             ),
                           );
                         },
