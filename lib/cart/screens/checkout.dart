@@ -1,5 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:cloud_firestore/cloud_firestore.dart'; // Import Firestore for database operations
 import 'package:visioncart/cart/models/item_model.dart';
 import 'package:visioncart/Login%20SignUp/Services/cartItems.dart';
 import 'package:visioncart/cart/screens/placeorderScreen.dart'; // CartDatabase for fetching items
@@ -55,6 +56,55 @@ class _CheckoutState extends State<Checkout> {
     if (widget.buyNowItem != null) {
       await CartDatabase()
           .updateItemQuantity(userId, widget.buyNowItem!.id, quantity);
+    }
+  }
+
+  // Implementing deductItemQuantity method
+  Future<void> _deductItemQuantity(String itemId, int quantity) async {
+    DocumentReference itemRef =
+        FirebaseFirestore.instance.collection('items').doc(itemId);
+
+    await itemRef.update({
+      'quantity': FieldValue.increment(-quantity),
+    });
+  }
+
+  Future<void> _placeOrder() async {
+    if (widget.buyNowItem != null) {
+      // Deduct the quantity from the items collection
+      await _deductItemQuantity(
+          widget.buyNowItem!.id, widget.buyNowItem!.quantity);
+
+      // Navigate to the PlaceOrder screen
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => PlaceOrder(
+            cartItems: [widget.buyNowItem!], // Pass the Buy Now item
+            grandTotal: widget.buyNowItem!.price * widget.buyNowItem!.quantity,
+          ),
+        ),
+      );
+    } else {
+      // Handle the cart items case
+      final cartItems =
+          await _cartItemsFuture; // Get the cart items from the future
+
+      for (var item in cartItems) {
+        // Deduct each item's quantity from the items collection
+        await _deductItemQuantity(item.id, item.quantity);
+      }
+
+      // Navigate to the PlaceOrder screen with all cart items
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => PlaceOrder(
+            cartItems: cartItems, // Pass all cart items
+            grandTotal: widget.grandTotal,
+          ),
+        ),
+      );
     }
   }
 
@@ -209,18 +259,7 @@ class _CheckoutState extends State<Checkout> {
         child: Row(
           children: [
             ElevatedButton(
-              onPressed: () {
-                // Navigate to place order screen with either Buy Now item or cart items
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => PlaceOrder(
-                      cartItems: cartItems, // Pass the cart or Buy Now items
-                      grandTotal: footerTotal,
-                    ),
-                  ),
-                );
-              },
+              onPressed: _placeOrder, // Update the onPressed to place the order
               child: const Text('Place Order'),
             ),
             const Spacer(),
