@@ -26,6 +26,7 @@ void main() async {
     } else {
       await Firebase.initializeApp();
     }
+    
     runApp(const MyApp());
   } catch (e) {
     // Handle initialization errors here

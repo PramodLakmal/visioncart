@@ -20,12 +20,22 @@ class _UserManagementState extends State<UserManagement> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('User Management'),
-        backgroundColor: const Color.fromARGB(255, 33, 150, 243),
+        title: Row(
+          children: [
+            Image.network(
+                      'https://firebasestorage.googleapis.com/v0/b/visioncart-5e1b8.appspot.com/o/Login%20and%20SignUp%2FVisionCart%20Logo.png?alt=media&token=45f2e245-c250-4336-a782-cad91d6b2618', height: 40), // Add logo here
+            const SizedBox(width: 10),
+            const Text(
+              'User Management',
+              style: TextStyle(fontSize: 22, fontWeight: FontWeight.w600, color: Colors.blueAccent),
+            ),
+          ],
+        ),
+        backgroundColor: const Color.fromARGB(255, 255, 255, 255),
         actions: [
           // PDF Generation button in AppBar
           IconButton(
-            icon: const Icon(Icons.picture_as_pdf),
+            icon: const Icon(Icons.picture_as_pdf, color: Colors.blueAccent, size: 40,),
             onPressed: () {
               _generatePDF(context);
             },
@@ -84,7 +94,7 @@ class _UserManagementState extends State<UserManagement> {
                   },
                 ),
               ),
-              const SizedBox(height: 16),
+              const SizedBox(height: 50),
               Expanded(
                 child: LayoutBuilder(
                   builder: (context, constraints) {
@@ -168,7 +178,7 @@ class _UserManagementState extends State<UserManagement> {
               return DataRow(cells: [
                 DataCell(Center(child: Text(data['name'] ?? 'Unknown'))),
                 DataCell(Center(child: Text(data['email'] ?? 'Unknown'))),
-                DataCell(Center(child: Text(data['isAdmin'] ? 'Admin' : 'User'))),
+                DataCell(Center(child: Text(data['isAdmin'] ? 'Admin' : 'User', style: TextStyle(color: data['isAdmin'] ? Colors.orangeAccent : Colors.blueAccent)))),
                 DataCell(Row(
                   children: [
                     IconButton(
@@ -291,7 +301,7 @@ class _UserManagementState extends State<UserManagement> {
       return StatefulBuilder(
         builder: (context, setState) {  // Manage the state within the dialog
           return AlertDialog(
-            title: const Text('Edit User'),
+            title: const Text('Edit User', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: Colors.blueAccent)),
             content: Column(
               mainAxisSize: MainAxisSize.min, // Ensures the dialog resizes based on content
               children: [
@@ -327,6 +337,9 @@ class _UserManagementState extends State<UserManagement> {
                 onPressed: () {
                   Navigator.of(context).pop(); // Close the dialog
                 },
+                style: TextButton.styleFrom(
+                  foregroundColor: Colors.blueAccent,
+                ),
                 child: const Text('Cancel'),
               ),
               TextButton(
@@ -339,6 +352,9 @@ class _UserManagementState extends State<UserManagement> {
                   });
                   Navigator.of(context).pop(); // Close the dialog after saving
                 },
+                style: TextButton.styleFrom(
+                  foregroundColor: Colors.white, backgroundColor: Colors.blueAccent,
+                ),
                 child: const Text('Save'),
               ),
             ],
@@ -363,6 +379,9 @@ class _UserManagementState extends State<UserManagement> {
               onPressed: () {
                 Navigator.of(context).pop(); // Close the dialog
               },
+              style: TextButton.styleFrom(
+                foregroundColor: Colors.blueAccent,
+              ),
               child: const Text('Cancel'),
             ),
             TextButton(
@@ -371,6 +390,9 @@ class _UserManagementState extends State<UserManagement> {
                 await FirebaseFirestore.instance.collection('users').doc(userId).delete();
                 Navigator.of(context).pop();
               },
+              style: TextButton.styleFrom(
+                foregroundColor: Colors.white, backgroundColor: Colors.red,
+              ),
               child: const Text('Delete'),
             ),
           ],

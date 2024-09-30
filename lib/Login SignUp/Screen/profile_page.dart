@@ -71,7 +71,7 @@ class _ProfilePageState extends State<ProfilePage> {
               Text(
               value.isNotEmpty ? value : 'Empty $label',
               style: TextStyle(
-                fontSize: 24,
+                fontSize: 22,
                 fontWeight: FontWeight.bold,
                 color: value.isNotEmpty ? Colors.yellowAccent : Colors.grey, // High contrast value color for non-empty, grey for empty
               ),
