@@ -1,6 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'item_card.dart'; // Assuming you have this file created for detailed view
+import 'item_card.dart';
 
 class ItemListPage extends StatefulWidget {
   const ItemListPage({super.key});
@@ -17,7 +17,7 @@ class _ItemListPageState extends State<ItemListPage> {
   TextEditingController searchController = TextEditingController();
   String _searchQuery = '';
 
-  final Color lightBlue = const Color.fromRGBO(33, 150, 243, 1); // Light blue color
+  final Color lightBlue = const Color.fromRGBO(33, 150, 243, 1);
 
   @override
   void initState() {
@@ -41,17 +41,17 @@ class _ItemListPageState extends State<ItemListPage> {
     QuerySnapshot snapshot = await itemsCollection.get();
     setState(() {
       allItems = snapshot.docs;
-      filteredItems = allItems; // Show all items initially
+      filteredItems = allItems;
     });
   }
 
   void _filterItems(String query) {
     List<DocumentSnapshot> results = [];
     if (query.isEmpty) {
-      results = allItems; // Show all items if search query is empty
+      results = allItems;
     } else {
       results = allItems.where((item) {
-        var itemName = (item.data() as Map<String, dynamic>)['name'].toString().toLowerCase();
+        var itemName = (item.data() as Map<String, dynamic>)['name']?.toString().toLowerCase() ?? '';
         return itemName.contains(query.toLowerCase());
       }).toList();
     }
@@ -59,6 +59,13 @@ class _ItemListPageState extends State<ItemListPage> {
     setState(() {
       filteredItems = results;
     });
+  }
+
+  Future<void> _updateItemQuantity(String id, double newQuantity) async {
+    // Update the quantity in Firestore
+    await itemsCollection.doc(id).update({'quantity': newQuantity});
+    // Refetch the items to get updated data
+    await _fetchItems();
   }
 
   @override
@@ -98,7 +105,7 @@ class _ItemListPageState extends State<ItemListPage> {
         ),
       ),
       body: Container(
-        color: Colors.grey[200], // Light grey background color
+        color: Colors.grey[200],
         child: filteredItems.isEmpty
             ? const Center(
                 child: Text('No items found', style: TextStyle(fontSize: 20)),
@@ -106,16 +113,16 @@ class _ItemListPageState extends State<ItemListPage> {
             : ListView.builder(
                 itemCount: filteredItems.length,
                 itemBuilder: (context, index) {
-                  var itemData = filteredItems[index].data() as Map<String, dynamic>;
+                  var itemData = filteredItems[index].data() as Map<String, dynamic>?; // Use nullable type
                   String id = filteredItems[index].id;
-                  String name = itemData['name'] ?? 'Unnamed Item';
-                  String description = itemData['description'] ?? 'No description';
-                  double price = itemData['price']?.toDouble() ?? 0.0;
-                  double quantity = itemData['quantity']?.toDouble() ?? 0.0;
-                  String imageUrl = itemData['imageUrl'] ?? '';
+                  String name = itemData?['name'] ?? 'Unnamed Item'; // Null check
+                  String description = itemData?['description'] ?? 'No description'; // Null check
+                  double price = itemData?['price']?.toDouble() ?? 0.0; // Null check
+                  double quantity = itemData?['quantity']?.toDouble() ?? 0.0; // Null check
+                  String imageUrl = itemData?['imageUrl'] ?? ''; // Null check
 
                   return Card(
-                    color: Colors.white, // White card background
+                    color: Colors.white,
                     elevation: 3,
                     margin: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
                     shape: RoundedRectangleBorder(
@@ -131,7 +138,7 @@ class _ItemListPageState extends State<ItemListPage> {
                                 child: Image.network(imageUrl,
                                     width: 80, height: 80, fit: BoxFit.cover),
                               )
-                            : const Icon(Icons.image, size: 50), 
+                            : const Icon(Icons.image, size: 50),
                         title: Text(
                           name,
                           style: const TextStyle(
@@ -158,8 +165,11 @@ class _ItemListPageState extends State<ItemListPage> {
                                 name: name,
                                 description: description,
                                 price: price,
-                                quantity: quantity,
+                                initialQuantity: quantity,
                                 imageUrl: imageUrl,
+                                onQuantityChanged: (newQuantity) {
+                                  _updateItemQuantity(id, newQuantity);
+                                },
                               ),
                             ),
                           );

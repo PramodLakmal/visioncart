@@ -6,13 +6,14 @@ import 'package:visioncart/cart/models/item_model.dart';
 import 'package:visioncart/Login%20SignUp/Services/cartItems.dart';
 import 'package:visioncart/cart/screens/checkout.dart';
 
-class ItemCard extends StatelessWidget {
+class ItemCard extends StatefulWidget {
   final String id;
   final String name;
   final String description;
   final double price;
-  final double quantity;
+  final double initialQuantity; // Renamed to distinguish from local state
   final String imageUrl;
+  final Function(double) onQuantityChanged; // Add this line
 
   const ItemCard({
     super.key,
@@ -20,9 +21,24 @@ class ItemCard extends StatelessWidget {
     required this.name,
     required this.description,
     required this.price,
-    required this.quantity,
+    required this.initialQuantity,
     required this.imageUrl,
+    required this.onQuantityChanged, // Add this line
   });
+
+  @override
+  _ItemCardState createState() => _ItemCardState();
+}
+
+class _ItemCardState extends State<ItemCard> {
+  late double _quantity; // State variable for quantity
+
+  @override
+  void initState() {
+    super.initState();
+    // Initialize the quantity state with the initial quantity
+    _quantity = widget.initialQuantity;
+  }
 
   // Method to convert ItemModel to Item
   Item convertItemModelToItem(ItemModel itemModel) {
@@ -42,7 +58,7 @@ class ItemCard extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Item Details'),
-        backgroundColor: const Color.fromRGBO(33, 150, 243, 1), // Top bar color
+        backgroundColor: const Color.fromRGBO(33, 150, 243, 1),
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
           onPressed: () {
@@ -58,11 +74,10 @@ class ItemCard extends StatelessWidget {
             children: [
               // Image section
               ClipRRect(
-                borderRadius: BorderRadius.circular(
-                    15.0), // Rounded corners for the image
-                child: imageUrl.isNotEmpty
+                borderRadius: BorderRadius.circular(15.0),
+                child: widget.imageUrl.isNotEmpty
                     ? Image.network(
-                        imageUrl,
+                        widget.imageUrl,
                         height: 250,
                         width: double.infinity,
                         fit: BoxFit.cover,
@@ -73,22 +88,21 @@ class ItemCard extends StatelessWidget {
 
               // Item name section
               Text(
-                name,
+                widget.name,
                 style: const TextStyle(
                   fontSize: 28,
                   fontWeight: FontWeight.bold,
-                  color: Colors.black87, // Darker font for emphasis
+                  color: Colors.black87,
                 ),
               ),
               const SizedBox(height: 8),
 
               // Item description
               Text(
-                description,
+                widget.description,
                 style: const TextStyle(
                   fontSize: 16,
-                  color: Color.fromARGB(
-                      255, 0, 0, 0), // Light color for description
+                  color: Color.fromARGB(255, 0, 0, 0),
                 ),
               ),
               const SizedBox(height: 16),
@@ -98,7 +112,7 @@ class ItemCard extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Text(
-                    '\$${price.toStringAsFixed(2)}',
+                    '\$${widget.price.toStringAsFixed(2)}',
                     style: const TextStyle(
                       fontSize: 24,
                       fontWeight: FontWeight.bold,
@@ -106,7 +120,7 @@ class ItemCard extends StatelessWidget {
                     ),
                   ),
                   Text(
-                    'Quantity: ${quantity.toInt()}',
+                    'Quantity: ${_quantity.toInt()}',
                     style: const TextStyle(
                       fontSize: 18,
                       color: Colors.black54,
@@ -121,29 +135,38 @@ class ItemCard extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
                   ElevatedButton(
-                    onPressed: () {
-                      // Create ItemModel
-                      ItemModel itemModel = ItemModel(
-                        id: id,
-                        name: name,
-                        description: description,
-                        price: price,
-                        quantity: quantity,
-                        imageUrl: imageUrl,
-                      );
+                    onPressed: _quantity > 0
+                        ? () {
+                            // Create ItemModel
+                            ItemModel itemModel = ItemModel(
+                              id: widget.id,
+                              name: widget.name,
+                              description: widget.description,
+                              price: widget.price,
+                              quantity: _quantity,
+                              imageUrl: widget.imageUrl,
+                            );
 
-                      // Convert ItemModel to Item
-                      Item item = convertItemModelToItem(itemModel);
+                            // Convert ItemModel to Item
+                            Item item = convertItemModelToItem(itemModel);
 
-                      // Add item to cart
-                      CartDatabase().addToCart(item);
+                            // Add item to cart
+                            CartDatabase().addToCart(item);
 
-                      // Navigate to the Cart screen
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(builder: (context) => const Cart()),
-                      );
-                    },
+                            // Decrease the quantity
+                            setState(() {
+                              _quantity--;
+                              widget.onQuantityChanged(_quantity); // Call the callback here
+                            });
+
+                            // Optionally navigate to the cart screen
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => const Cart()),
+                            );
+                          }
+                        : null, // Disable button when quantity is 0
                     style: ElevatedButton.styleFrom(
                       backgroundColor: const Color.fromARGB(255, 62, 60, 64),
                       padding: const EdgeInsets.symmetric(
@@ -167,16 +190,15 @@ class ItemCard extends StatelessWidget {
                         context,
                         MaterialPageRoute(
                           builder: (context) => Checkout(
-                            grandTotal:
-                                price * quantity, // Pass the grand total
+                            grandTotal: widget.price * _quantity,
                             buyNowItem: Item(
                               userId: FirebaseAuth.instance.currentUser!.uid,
-                              id: id,
-                              name: name,
-                              description: description,
-                              price: price,
-                              quantity: quantity.toInt(),
-                              image: imageUrl,
+                              id: widget.id,
+                              name: widget.name,
+                              description: widget.description,
+                              price: widget.price,
+                              quantity: _quantity.toInt(),
+                              image: widget.imageUrl,
                             ),
                           ),
                         ),
