@@ -202,7 +202,7 @@ class _ItemCardState extends State<ItemCard> {
                               name: widget.name,
                               description: widget.description,
                               price: widget.price,
-                              quantity: _quantity.toInt(),
+                              quantity: 1,
                               image: widget.imageUrl,
                             ),
                           ),
