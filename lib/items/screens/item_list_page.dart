@@ -65,10 +65,13 @@ class _ItemListPageState extends State<ItemListPage> {
   }
 
   Future<void> _updateItemQuantity(String id, double newQuantity) async {
-    // Update the quantity in Firestore
     await itemsCollection.doc(id).update({'quantity': newQuantity});
-    // Refetch the items to get updated data
     await _fetchItems();
+  }
+
+  String capitalizeFirstLetter(String text) {
+    if (text.isEmpty) return text;
+    return text[0].toUpperCase() + text.substring(1);
   }
 
   @override
@@ -79,7 +82,7 @@ class _ItemListPageState extends State<ItemListPage> {
         title: const Center(
             child: Text(
           'Item List',
-          style: const TextStyle(
+          style: TextStyle(
               color: Color(0xFFFFFFFF),
               fontWeight: FontWeight.bold,
               fontSize: 28,
@@ -125,10 +128,10 @@ class _ItemListPageState extends State<ItemListPage> {
               )
             : GridView.builder(
                 gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                  crossAxisCount: 2, // Two columns
+                  crossAxisCount: 2,
                   mainAxisSpacing: 10.0,
                   crossAxisSpacing: 10.0,
-                  childAspectRatio: 0.65, // Adjust for card aspect ratio
+                  childAspectRatio: 0.65,
                 ),
                 itemCount: filteredItems.length,
                 padding: const EdgeInsets.all(10),
@@ -143,9 +146,11 @@ class _ItemListPageState extends State<ItemListPage> {
                   double quantity = itemData?['quantity']?.toDouble() ?? 0.0;
                   String imageUrl = itemData?['imageUrl'] ?? '';
 
+                  // Capitalize the first letter of the item name
+                  name = capitalizeFirstLetter(name);
+
                   return GestureDetector(
                     onTap: () {
-                      // Navigate to the ItemCard page when tapped
                       Navigator.push(
                         context,
                         MaterialPageRoute(
@@ -181,8 +186,7 @@ class _ItemListPageState extends State<ItemListPage> {
                               child: imageUrl.isNotEmpty
                                   ? Image.network(imageUrl,
                                       width: double.infinity, fit: BoxFit.cover)
-                                  : const Icon(Icons.image,
-                                      size: 80), // Placeholder
+                                  : const Icon(Icons.image, size: 80),
                             ),
                           ),
                           Padding(
@@ -194,12 +198,12 @@ class _ItemListPageState extends State<ItemListPage> {
                                   name,
                                   style: const TextStyle(
                                     fontWeight: FontWeight.bold,
-                                    fontSize: 26,
+                                    fontSize: 28,
                                   ),
                                 ),
                                 const SizedBox(height: 5),
                                 Text(
-                                  'In stock : ${quantity.toInt()}',
+                                  'In stock: ${quantity.toInt()}',
                                   style: const TextStyle(
                                     color: Colors.black,
                                     fontSize: 20,
@@ -211,7 +215,7 @@ class _ItemListPageState extends State<ItemListPage> {
                                   style: const TextStyle(
                                     color: Colors.black,
                                     fontWeight: FontWeight.bold,
-                                    fontSize: 22,
+                                    fontSize: 20,
                                   ),
                                 ),
                               ],
