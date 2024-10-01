@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart'; 
+import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:pdf/pdf.dart';
 import 'package:pdf/widgets.dart' as pw;
@@ -53,13 +53,13 @@ class _ItemManagementState extends State<ItemManagement> {
             pw.Table.fromTextArray(
               context: context,
               data: <List<String>>[
-                <String>['Name', 'Description', 'Price', 'Quantity'],
+                <String>['Item ID', 'Name', 'Price', 'Quantity'],
                 ...items.map(
                   (item) {
                     final data = item.data() as Map<String, dynamic>;
                     return [
+                      item.id, // Add item ID here
                       data['name'] ?? '',
-                      data['description'] ?? '',
                       data['price'].toString(),
                       data['quantity'].toString(),
                     ];
