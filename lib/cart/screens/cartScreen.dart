@@ -59,13 +59,29 @@ class _CartState extends State<Cart> {
           future: _cartItemsFuture,
           builder: (context, snapshot) {
             if (!snapshot.hasData) {
-              return const Text('Cart (0 items)');
+              return const Text(
+                'Cart (0 items)',
+                style: const TextStyle(
+                    color: Color(0xFFFFFFFF),
+                    fontWeight: FontWeight.bold,
+                    fontSize: 28,
+                    letterSpacing: 1.2),
+              );
             }
 
             List<Item> cartItems = snapshot.data!;
-            return Text('Cart (${cartItems.length} items)');
+            return Text(
+              'Cart (${cartItems.length} items)',
+              style: const TextStyle(
+                  color: Color(0xFFFFFFFF),
+                  fontWeight: FontWeight.bold,
+                  fontSize: 28,
+                  letterSpacing: 1.2),
+            );
           },
         ),
+        backgroundColor: Colors.black87,
+        foregroundColor: Colors.white,
       ),
       body: FutureBuilder<List<Item>>(
         future: _cartItemsFuture,
@@ -92,38 +108,42 @@ class _CartState extends State<Cart> {
                   Padding(
                     padding: const EdgeInsets.all(20),
                     child: ElevatedButton(
-                        style: ElevatedButton.styleFrom(
-                          minimumSize: const Size(200, 60),
-                          backgroundColor:
-                              Colors.blue, // Background color of the button
-                          // Text color
-                        ),
-                        onPressed: () {
-                          double grandTotal =
-                              getGrandTotal(cartItems); // Get the total amount
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) =>
-                                  Checkout(grandTotal: grandTotal),
-                            ),
-                          );
-                        },
-                        child: const Text('Checkout',
-                            style: TextStyle(
-                                fontSize: 20, fontWeight: FontWeight.bold))),
+                      style: ElevatedButton.styleFrom(
+                          minimumSize:
+                              const Size(180, 60), // Reduced size to fit
+                          backgroundColor: Colors.black87,
+                          foregroundColor:
+                              Colors.white // Background color of the button
+                          ),
+                      onPressed: () {
+                        double grandTotal =
+                            getGrandTotal(cartItems); // Get the total amount
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) =>
+                                Checkout(grandTotal: grandTotal),
+                          ),
+                        );
+                      },
+                      child: const Text(
+                        'Checkout',
+                        style: TextStyle(
+                            fontSize: 18, fontWeight: FontWeight.bold),
+                      ),
+                    ),
                   ),
-                  const Spacer(),
+                  // Pushes the next widget to the right side
                   Padding(
                     padding: const EdgeInsets.all(20),
-                    child: Row(
-                      children: [
-                        Text(
-                          'Total: \$${getGrandTotal(cartItems).toStringAsFixed(2)}',
-                          style: const TextStyle(
-                              fontSize: 20, fontWeight: FontWeight.bold),
-                        ),
-                      ],
+                    child: Flexible(
+                      child: Text(
+                        'Total: \$${getGrandTotal(cartItems).toStringAsFixed(2)}',
+                        style: const TextStyle(
+                            fontSize: 18, fontWeight: FontWeight.bold),
+                        overflow:
+                            TextOverflow.ellipsis, // Handles text overflow
+                      ),
                     ),
                   ),
                 ],

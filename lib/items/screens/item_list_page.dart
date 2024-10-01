@@ -17,7 +17,7 @@ class _ItemListPageState extends State<ItemListPage> {
   TextEditingController searchController = TextEditingController();
   String _searchQuery = '';
 
-  final Color lightBlue = const Color.fromRGBO(33, 150, 243, 1);
+  final Color lightBlue = Colors.black87;
 
   @override
   void initState() {
@@ -75,7 +75,16 @@ class _ItemListPageState extends State<ItemListPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Item List'),
+        foregroundColor: Colors.white,
+        title: const Center(
+            child: Text(
+          'Item List',
+          style: const TextStyle(
+              color: Color(0xFFFFFFFF),
+              fontWeight: FontWeight.bold,
+              fontSize: 28,
+              letterSpacing: 1.2),
+        )),
         backgroundColor: lightBlue,
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
@@ -86,7 +95,8 @@ class _ItemListPageState extends State<ItemListPage> {
         bottom: PreferredSize(
           preferredSize: const Size.fromHeight(56.0),
           child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+            padding:
+                const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
             child: TextField(
               controller: searchController,
               decoration: InputDecoration(
@@ -108,7 +118,7 @@ class _ItemListPageState extends State<ItemListPage> {
         ),
       ),
       body: Container(
-        color: Colors.grey[200],
+        color: Colors.blueGrey[800],
         child: filteredItems.isEmpty
             ? const Center(
                 child: Text('No items found', style: TextStyle(fontSize: 20)),
@@ -170,8 +180,7 @@ class _ItemListPageState extends State<ItemListPage> {
                               ),
                               child: imageUrl.isNotEmpty
                                   ? Image.network(imageUrl,
-                                      width: double.infinity,
-                                      fit: BoxFit.cover)
+                                      width: double.infinity, fit: BoxFit.cover)
                                   : const Icon(Icons.image,
                                       size: 80), // Placeholder
                             ),
@@ -185,24 +194,24 @@ class _ItemListPageState extends State<ItemListPage> {
                                   name,
                                   style: const TextStyle(
                                     fontWeight: FontWeight.bold,
-                                    fontSize: 16,
+                                    fontSize: 26,
                                   ),
                                 ),
                                 const SizedBox(height: 5),
                                 Text(
-                                  'Total Sales: ${quantity.toInt()}',
+                                  'In stock : ${quantity.toInt()}',
                                   style: const TextStyle(
-                                    color: Colors.blueGrey,
-                                    fontSize: 14,
+                                    color: Colors.black,
+                                    fontSize: 20,
                                   ),
                                 ),
                                 const SizedBox(height: 5),
                                 Text(
-                                  '\$${price.toStringAsFixed(2)}',
+                                  'Rs: ${price.toStringAsFixed(2)}',
                                   style: const TextStyle(
-                                    color: Colors.green,
+                                    color: Colors.black,
                                     fontWeight: FontWeight.bold,
-                                    fontSize: 14,
+                                    fontSize: 22,
                                   ),
                                 ),
                               ],
