@@ -1,17 +1,24 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:open_file/open_file.dart';
+import 'package:path_provider/path_provider.dart';
+import 'dart:io';
+import 'package:pdf/pdf.dart';
+import 'package:pdf/widgets.dart' as pw;
 
 class Orders extends StatefulWidget {
-  const Orders({super.key});
+  const Orders({Key? key}) : super(key: key);
 
   @override
-  State<Orders> createState() => _OrdersState();
+  _OrdersState createState() => _OrdersState();
 }
 
 class _OrdersState extends State<Orders> {
   late final Stream<QuerySnapshot> _ordersStream;
+  double fontSizeMultiplier =
+      1.0; // To track the font size multiplier (1x or 2x)
 
   @override
   void initState() {
@@ -21,6 +28,13 @@ class _OrdersState extends State<Orders> {
         .collection('orders')
         .where('userId', isEqualTo: userId)
         .snapshots();
+  }
+
+  // Function to toggle the font size multiplier between 1x and 2x
+  void _toggleFontSize() {
+    setState(() {
+      fontSizeMultiplier = fontSizeMultiplier == 1.0 ? 1.5 : 1.0;
+    });
   }
 
   // Function to delete an order from Firestore
@@ -47,12 +61,76 @@ class _OrdersState extends State<Orders> {
     return currentTime.difference(orderTime).inMinutes <= 2;
   }
 
+  // Function to generate and download the receipt
+  Future<void> _downloadReceipt(
+      Map<String, dynamic> order, String orderId) async {
+    final pdf = pw.Document();
+    final orderItems = order['items'] as List<dynamic>;
+    final orderTimestamp = order['timestamp'] as Timestamp;
+    final total = order['total'];
+    final paymentMethod = order['paymentMethod'] as String;
+
+    pdf.addPage(
+      pw.Page(
+        build: (pw.Context context) => pw.Column(
+          children: [
+            pw.Text('Receipt', style: pw.TextStyle(fontSize: 24)),
+            pw.SizedBox(height: 20),
+            pw.Text('Order ID: $orderId'),
+            pw.Text('Payment Method: $paymentMethod'),
+            pw.Text('Order Total: Rs $total'),
+            pw.SizedBox(height: 20),
+            pw.Text('Items:', style: pw.TextStyle(fontSize: 18)),
+            pw.ListView.builder(
+              itemCount: orderItems.length,
+              itemBuilder: (context, index) {
+                final item = orderItems[index];
+                return pw.Row(
+                  mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
+                  children: [
+                    pw.Text(item['name']),
+                    pw.Text('Quantity: ${item['quantity']}'),
+                    pw.Text('Price: Rs ${item['price']}'),
+                  ],
+                );
+              },
+            ),
+            pw.SizedBox(height: 20),
+            pw.Text('Thank you for shopping with us!',
+                style: pw.TextStyle(fontSize: 12)),
+          ],
+        ),
+      ),
+    );
+
+    // Get the storage directory
+    final output = await getTemporaryDirectory();
+    final filePath = '${output.path}/receipt_$orderId.pdf';
+    final file = File(filePath);
+
+    // Save the PDF file
+    await file.writeAsBytes(await pdf.save());
+
+    // Open the PDF file
+    OpenFile.open(filePath);
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: const Text('My Orders'),
         backgroundColor: Colors.blue,
+        actions: [
+          // Toggle Button to switch between 1x and 2x font sizes
+          TextButton(
+            onPressed: _toggleFontSize,
+            child: Text(
+              fontSizeMultiplier == 1.0 ? '1x' : '2x',
+              style: const TextStyle(color: Colors.white),
+            ),
+          ),
+        ],
       ),
       body: StreamBuilder<QuerySnapshot>(
         stream: _ordersStream,
@@ -89,37 +167,61 @@ class _OrdersState extends State<Orders> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       // Main Title
-                      const Text(
-                        'Your Order',
-                        style: TextStyle(
-                          fontSize: 20,
-                          fontWeight: FontWeight.bold,
+                      Center(
+                        child: Text(
+                          'Your Order',
+                          style: TextStyle(
+                            fontSize: 20 * fontSizeMultiplier,
+                            fontWeight: FontWeight.bold,
+                          ),
                         ),
                       ),
                       const SizedBox(height: 10),
+                      // Order ID
+                      Text('Order ID: ${orderDoc.id}',
+                          style: TextStyle(
+                              fontSize: 16 * fontSizeMultiplier,
+                              fontWeight: FontWeight.bold)),
 
                       // Order Total
                       Text(
                         'Order Total: Rs ${order['total']}',
-                        style: const TextStyle(
-                          fontSize: 16,
+                        style: TextStyle(
+                          fontSize: 16 * fontSizeMultiplier,
                           fontWeight: FontWeight.bold,
                         ),
                       ),
                       const SizedBox(height: 10),
 
                       // Payment Method
-                      Text('Payment Method: $paymentMethod'),
+                      Text('Payment Method: $paymentMethod',
+                          style: TextStyle(fontSize: 14 * fontSizeMultiplier)),
                       const SizedBox(height: 10),
 
                       // Table Header
-                      const Row(
+                      Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          Expanded(child: Text('Item Name')),
-                          Expanded(child: Text('Quantity')),
-                          Expanded(child: Text('Unit Price')),
-                          Expanded(child: Text('Amount')),
+                          Expanded(
+                            child: Text('Item Name',
+                                style: TextStyle(
+                                    fontSize: 14 * fontSizeMultiplier)),
+                          ),
+                          Expanded(
+                            child: Text('Quantity',
+                                style: TextStyle(
+                                    fontSize: 14 * fontSizeMultiplier)),
+                          ),
+                          Expanded(
+                            child: Text('Unit Price',
+                                style: TextStyle(
+                                    fontSize: 14 * fontSizeMultiplier)),
+                          ),
+                          Expanded(
+                            child: Text('Amount',
+                                style: TextStyle(
+                                    fontSize: 14 * fontSizeMultiplier)),
+                          ),
                         ],
                       ),
                       const Divider(height: 10),
@@ -129,13 +231,33 @@ class _OrdersState extends State<Orders> {
                         (item) => Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
-                            Expanded(child: Text(item['name'])),
-                            Expanded(child: Text('${item['quantity']}')),
-                            Expanded(child: Text('Rs ${item['price']}')),
+                            Expanded(
+                              child: Text(
+                                item['name'],
+                                style: TextStyle(
+                                    fontSize: 14 * fontSizeMultiplier),
+                              ),
+                            ),
+                            Expanded(
+                              child: Text(
+                                '${item['quantity']}',
+                                style: TextStyle(
+                                    fontSize: 14 * fontSizeMultiplier),
+                              ),
+                            ),
+                            Expanded(
+                              child: Text(
+                                'Rs ${item['price']}',
+                                style: TextStyle(
+                                    fontSize: 14 * fontSizeMultiplier),
+                              ),
+                            ),
                             Expanded(
                               child: Text(
                                 'Rs ${item['price'] * item['quantity']}',
                                 textAlign: TextAlign.right,
+                                style: TextStyle(
+                                    fontSize: 14 * fontSizeMultiplier),
                               ),
                             ),
                           ],
@@ -146,21 +268,24 @@ class _OrdersState extends State<Orders> {
                       // Order Placed
                       Text(
                         'Order Placed: ${DateFormat.yMMMd().add_jm().format(orderTimestamp.toDate())}',
+                        style: TextStyle(fontSize: 14 * fontSizeMultiplier),
                       ),
                       const SizedBox(height: 10),
                       // Show a message based on the order status
                       if (status == 'packed') ...[
                         if (paymentMethod == 'Cash on Delivery')
-                          const Text(
+                          Text(
                             'Order is on the way',
                             style: TextStyle(
+                                fontSize: 14 * fontSizeMultiplier,
                                 color: Colors.green,
                                 fontWeight: FontWeight.bold),
                           )
                         else
-                          const Text(
+                          Text(
                             'Pick your order at the shop',
                             style: TextStyle(
+                                fontSize: 14 * fontSizeMultiplier,
                                 color: Colors.green,
                                 fontWeight: FontWeight.bold),
                           ),
@@ -168,30 +293,50 @@ class _OrdersState extends State<Orders> {
                       const SizedBox(height: 10),
                       // Show Delete or Confirmed based on time since order was placed
                       if (_canCancelOrder(orderTimestamp))
-                        ElevatedButton(
-                          onPressed: () => _cancelOrder(context, orderDoc.id),
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: Colors.red,
+                        Center(
+                          child: ElevatedButton(
+                            onPressed: () => _cancelOrder(context, orderDoc.id),
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: Colors.red,
+                            ),
+                            child: Text('Cancel Order',
+                                style: TextStyle(
+                                    fontSize: 14 * fontSizeMultiplier)),
                           ),
-                          child: const Text('Cancel Order'),
                         )
                       else
-                        const Text(
-                          'Confirmed',
-                          style: TextStyle(
-                              color: Colors.green, fontWeight: FontWeight.bold),
+                        Center(
+                          child: Text(
+                            'Confirmed',
+                            style: TextStyle(
+                                fontSize: 14 * fontSizeMultiplier,
+                                color: Colors.green,
+                                fontWeight: FontWeight.bold),
+                          ),
                         ),
+
+                      const SizedBox(height: 10),
+                      // Download Receipt Button
+                      Center(
+                        child: ElevatedButton(
+                          onPressed: () => _downloadReceipt(order, orderDoc.id),
+                          child: Text('Download Receipt',
+                              style:
+                                  TextStyle(fontSize: 14 * fontSizeMultiplier)),
+                        ),
+                      ),
 
                       const SizedBox(height: 10),
 
                       // Quote
-                      const Center(
+                      Center(
                         child: Text(
                           'Thank you for shopping with us!',
                           style: TextStyle(
                             fontStyle: FontStyle.italic,
-                            fontSize: 14,
-                            color: Colors.grey,
+                            fontSize: 14 * fontSizeMultiplier,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.black,
                           ),
                         ),
                       ),

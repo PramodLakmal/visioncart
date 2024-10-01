@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:visioncart/cart/models/item_model.dart';
 
@@ -23,23 +24,57 @@ class _ItemTileState extends State<ItemTile> {
   @override
   void initState() {
     super.initState();
-    _quantity = widget.singleItem.quantity;
+    _quantity =
+        widget.singleItem.quantity; // Initialize with the current quantity
+  }
+
+  // Function to update quantity in Firestore for the item
+  Future<void> _updateQuantityInItemsCollection(int quantityChange) async {
+    try {
+      await FirebaseFirestore.instance
+          .collection('items') // Assuming the collection is 'items'
+          .doc(widget.singleItem.id) // Reference the document by the item ID
+          .update({
+        'quantity': FieldValue.increment(
+            quantityChange), // Increment or decrement the quantity
+      });
+      print('Quantity updated in items collection');
+    } catch (e) {
+      print('Failed to update quantity: $e');
+    }
+  }
+
+  // Function to update quantity in Firestore when deleting the item
+  Future<void> _deleteItem() async {
+    try {
+      await widget.onDelete(); // Call the delete function from parent widget
+      await _updateQuantityInItemsCollection(
+          _quantity); // Add back the quantity
+      print('Item deleted and quantity updated in items collection');
+    } catch (e) {
+      print('Failed to delete item: $e');
+    }
   }
 
   void _increaseQuantity() {
     setState(() {
       _quantity++;
     });
-    widget.onQuantityChanged(_quantity);
+    widget.onQuantityChanged(
+        _quantity); // Notify parent widget of quantity change
+    _updateQuantityInItemsCollection(-1); // Decrement the quantity in Firestore
   }
 
   void _decreaseQuantity() {
-    setState(() {
-      if (_quantity > 0) {
+    if (_quantity > 0) {
+      setState(() {
         _quantity--;
-      }
-    });
-    widget.onQuantityChanged(_quantity);
+      });
+      widget.onQuantityChanged(
+          _quantity); // Notify parent widget of quantity change
+      _updateQuantityInItemsCollection(
+          1); // Increment the quantity in Firestore
+    }
   }
 
   @override
@@ -49,10 +84,16 @@ class _ItemTileState extends State<ItemTile> {
         padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
         child: Column(
           children: [
-            const Row(
+            Row(
               children: [
-                Icon(Icons.image, size: 100),
-                Spacer(),
+                Expanded(
+                  child: Image(
+                    image: NetworkImage(widget.singleItem.image),
+                    width: double.infinity,
+                    height: 100,
+                    fit: BoxFit.cover,
+                  ),
+                ),
               ],
             ),
             Row(
@@ -60,13 +101,17 @@ class _ItemTileState extends State<ItemTile> {
                 Text(
                   widget.singleItem.name,
                   style: const TextStyle(
-                      fontSize: 30, fontWeight: FontWeight.bold),
+                    fontSize: 30,
+                    fontWeight: FontWeight.bold,
+                  ),
                 ),
                 const Spacer(),
                 Text(
                   'Rs: ${widget.singleItem.price}',
                   style: const TextStyle(
-                      fontSize: 30, fontWeight: FontWeight.bold),
+                    fontSize: 30,
+                    fontWeight: FontWeight.bold,
+                  ),
                 ),
               ],
             ),
@@ -78,7 +123,9 @@ class _ItemTileState extends State<ItemTile> {
                   child: Text(
                     widget.singleItem.description,
                     style: const TextStyle(
-                        fontSize: 10, fontWeight: FontWeight.bold),
+                      fontSize: 10,
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
                 ),
               ],
@@ -102,7 +149,7 @@ class _ItemTileState extends State<ItemTile> {
                 ),
                 const Spacer(),
                 GestureDetector(
-                  onTap: widget.onDelete,
+                  onTap: _deleteItem, // Call the delete item function
                   child: const Icon(Icons.delete),
                 ),
               ],

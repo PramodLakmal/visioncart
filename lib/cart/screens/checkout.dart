@@ -1,5 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:cloud_firestore/cloud_firestore.dart'; // Import Firestore for database operations
 import 'package:visioncart/cart/models/item_model.dart';
 import 'package:visioncart/Login%20SignUp/Services/cartItems.dart';
 import 'package:visioncart/cart/screens/placeorderScreen.dart'; // CartDatabase for fetching items
@@ -32,6 +33,81 @@ class _CheckoutState extends State<Checkout> {
     }
   }
 
+  // Increase the quantity of the Buy Now item
+  void _increaseQuantity() {
+    setState(() {
+      widget.buyNowItem!.quantity++;
+    });
+    // Update Firebase after increasing quantity
+    _updateBuyNowItemQuantity(widget.buyNowItem!.quantity);
+  }
+
+  void _decreaseQuantity() {
+    if (widget.buyNowItem!.quantity > 1) {
+      setState(() {
+        widget.buyNowItem!.quantity--;
+      });
+      // Update Firebase after decreasing quantity
+      _updateBuyNowItemQuantity(widget.buyNowItem!.quantity);
+    }
+  }
+
+  Future<void> _updateBuyNowItemQuantity(int quantity) async {
+    if (widget.buyNowItem != null) {
+      await CartDatabase()
+          .updateItemQuantity(userId, widget.buyNowItem!.id, quantity);
+    }
+  }
+
+  // Implementing deductItemQuantity method
+  Future<void> _deductItemQuantity(String itemId, int quantity) async {
+    DocumentReference itemRef =
+        FirebaseFirestore.instance.collection('items').doc(itemId);
+
+    await itemRef.update({
+      'quantity': FieldValue.increment(-quantity),
+    });
+  }
+
+  Future<void> _placeOrder() async {
+    if (widget.buyNowItem != null) {
+      // Deduct the quantity from the items collection
+      await _deductItemQuantity(
+          widget.buyNowItem!.id, widget.buyNowItem!.quantity);
+
+      // Navigate to the PlaceOrder screen
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => PlaceOrder(
+            cartItems: [widget.buyNowItem!], // Pass the Buy Now item
+            grandTotal: widget.buyNowItem!.price * widget.buyNowItem!.quantity,
+          ),
+        ),
+      );
+    } else {
+      // Handle the cart items case
+      final cartItems =
+          await _cartItemsFuture; // Get the cart items from the future
+
+      for (var item in cartItems) {
+        // Deduct each item's quantity from the items collection
+        await _deductItemQuantity(item.id, item.quantity);
+      }
+
+      // Navigate to the PlaceOrder screen with all cart items
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => PlaceOrder(
+            cartItems: cartItems, // Pass all cart items
+            grandTotal: widget.grandTotal,
+          ),
+        ),
+      );
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -47,6 +123,9 @@ class _CheckoutState extends State<Checkout> {
 
   // Build checkout page when coming from "Buy Now"
   Widget _buildBuyNowItem() {
+    double updatedTotal =
+        widget.buyNowItem!.price * widget.buyNowItem!.quantity;
+
     return Column(
       children: [
         Expanded(
@@ -72,9 +151,25 @@ class _CheckoutState extends State<Checkout> {
                       ],
                     ),
                     const SizedBox(height: 10),
-                    Text(
-                      'Quantity: ${widget.buyNowItem!.quantity}',
-                      style: const TextStyle(fontSize: 16),
+                    Row(
+                      children: [
+                        ElevatedButton(
+                          onPressed: _increaseQuantity,
+                          child: const Icon(Icons.add),
+                        ),
+                        Padding(
+                          padding: const EdgeInsets.all(20.0),
+                          child: Text(
+                            'Quantity: ${widget.buyNowItem!.quantity}',
+                            style: const TextStyle(fontSize: 15),
+                          ),
+                        ),
+                        ElevatedButton(
+                          onPressed: _decreaseQuantity,
+                          child: const Icon(Icons.remove),
+                        ),
+                        const Spacer(),
+                      ],
                     ),
                   ],
                 ),
@@ -83,8 +178,8 @@ class _CheckoutState extends State<Checkout> {
           ),
         ),
         _buildFooter(cartItems: [
-          widget.buyNowItem!
-        ]), // The footer with the total and place order button
+          widget.buyNowItem!,
+        ], total: updatedTotal), // Pass the updated total to the footer
       ],
     );
   }
@@ -152,7 +247,10 @@ class _CheckoutState extends State<Checkout> {
   }
 
   // Footer section for both "Buy Now" and cart items
-  Widget _buildFooter({required List<Item> cartItems}) {
+  Widget _buildFooter({required List<Item> cartItems, double? total}) {
+    double footerTotal = total ??
+        widget.grandTotal; // Use the total passed from Buy Now or grandTotal
+
     return Container(
       color: Colors.blue,
       height: 150,
@@ -161,23 +259,12 @@ class _CheckoutState extends State<Checkout> {
         child: Row(
           children: [
             ElevatedButton(
-              onPressed: () {
-                // Navigate to place order screen with either Buy Now item or cart items
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => PlaceOrder(
-                      cartItems: cartItems, // Pass the cart or Buy Now items
-                      grandTotal: widget.grandTotal,
-                    ),
-                  ),
-                );
-              },
+              onPressed: _placeOrder, // Update the onPressed to place the order
               child: const Text('Place Order'),
             ),
             const Spacer(),
             Text(
-              ' Total: Rs ${widget.grandTotal}',
+              ' Total: Rs ${footerTotal}',
               style: const TextStyle(fontSize: 20),
             ),
           ],

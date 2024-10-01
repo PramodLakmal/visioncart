@@ -49,7 +49,7 @@ class _ItemCardState extends State<ItemCard> {
       name: itemModel.name ?? 'Unnamed Item',
       description: itemModel.description ?? 'No description available',
       price: itemModel.price ?? 0.0,
-      quantity: itemModel.quantity?.toInt() ?? 1,
+      quantity: 1,
     );
   }
 
@@ -136,35 +136,40 @@ class _ItemCardState extends State<ItemCard> {
                 children: [
                   ElevatedButton(
                     onPressed: _quantity > 0
-                        ? () {
-                            // Create ItemModel
-                            ItemModel itemModel = ItemModel(
-                              id: widget.id,
-                              name: widget.name,
-                              description: widget.description,
-                              price: widget.price,
-                              quantity: _quantity,
-                              imageUrl: widget.imageUrl,
-                            );
+                        ? () async {
+                            // Make the callback asynchronous
+                            if (_quantity > 0) {
+                              // Ensure there's quantity to add
+                              // Create ItemModel
+                              ItemModel itemModel = ItemModel(
+                                id: widget.id,
+                                name: widget.name,
+                                description: widget.description,
+                                price: widget.price,
+                                quantity: _quantity,
+                                imageUrl: widget.imageUrl,
+                              );
 
-                            // Convert ItemModel to Item
-                            Item item = convertItemModelToItem(itemModel);
+                              // Convert ItemModel to Item
+                              Item item = convertItemModelToItem(itemModel);
 
-                            // Add item to cart
-                            CartDatabase().addToCart(item);
+                              // Add item to cart and await the operation
+                              await CartDatabase().addToCart(item);
 
-                            // Decrease the quantity
-                            setState(() {
-                              _quantity--;
-                              widget.onQuantityChanged(_quantity); // Call the callback here
-                            });
+                              // Decrease the quantity
+                              setState(() {
+                                _quantity--;
+                                widget.onQuantityChanged(
+                                    _quantity); // Call the callback here
+                              });
 
-                            // Optionally navigate to the cart screen
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) => const Cart()),
-                            );
+                              // Navigate to the cart screen after the item is successfully added
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) => const Cart()),
+                              );
+                            }
                           }
                         : null, // Disable button when quantity is 0
                     style: ElevatedButton.styleFrom(

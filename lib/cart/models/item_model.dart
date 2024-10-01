@@ -1,4 +1,3 @@
-
 class Item {
   final String id;
   final String image;
@@ -39,7 +38,7 @@ class Item {
       name: map['name'],
       description: map['description'],
       price: map['price'],
-      quantity: 1,
+      quantity: map['quantity'],
       userId: map['userId'], // Retrieve userId from Firestore
     );
   }
