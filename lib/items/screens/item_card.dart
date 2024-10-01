@@ -99,7 +99,7 @@ class _ItemCardState extends State<ItemCard> {
               Text(
                 widget.name,
                 style: const TextStyle(
-                  fontSize: 36,
+                  fontSize: 40,
                   fontWeight: FontWeight.bold,
                   color: Colors.black87,
                 ),
@@ -133,6 +133,7 @@ class _ItemCardState extends State<ItemCard> {
                     'Quantity: ${_quantity.toInt()}',
                     style: const TextStyle(
                       fontSize: 22,
+                      fontWeight: FontWeight.bold,
                       color: Colors.black,
                     ),
                   ),
@@ -183,7 +184,7 @@ class _ItemCardState extends State<ItemCard> {
                           }
                         : null, // Disable button when quantity is 0
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: const Color.fromARGB(255, 62, 60, 64),
+                      backgroundColor: const Color.fromARGB(255, 0, 0, 0),
                       padding: const EdgeInsets.symmetric(
                           horizontal: 40, vertical: 16),
                       shape: RoundedRectangleBorder(
@@ -220,7 +221,7 @@ class _ItemCardState extends State<ItemCard> {
                       );
                     },
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: const Color.fromARGB(255, 62, 60, 64),
+                      backgroundColor: const Color.fromARGB(255, 0, 0, 0),
                       padding: const EdgeInsets.symmetric(
                           horizontal: 40, vertical: 16),
                       shape: RoundedRectangleBorder(
