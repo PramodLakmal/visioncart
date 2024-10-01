@@ -39,11 +39,12 @@ dependencies:
   path_provider: ^2.0.13
   universal_html: ^2.0.6
   http: ^1.2.2           # For API calls
-  speech_to_text: ^6.6.2  # For converting speech to text
+  speech_to_text: 7.0.0  # For converting speech to text
   flutter_tts: ^4.0.2     # For text-to-speech
   permission_handler: ^11.3.1
   local_auth: ^2.1.6
   firebase_app_check: ^0.3.1+1
+  shared_preferences: ^2.0.0
   
 
   # The following adds the Cupertino Icons font to your application.
