@@ -54,6 +54,8 @@ class _ProfilePageState extends State<EditProfile> {
   }
 
   Future<void> updateProfile() async {
+    if (!_validateInputs()) return;  // Call validation method before updating profile
+
     User? user = FirebaseAuth.instance.currentUser;
     if (user != null) {
       await FirebaseFirestore.instance.collection('users').doc(user.uid).update({
@@ -66,7 +68,38 @@ class _ProfilePageState extends State<EditProfile> {
         'country': countryController.text,
         'postalCode': postalCodeController.text,
       });
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Profile updated successfully!')),
+      );
     }
+  }
+
+  bool _validateInputs() {
+    // Validate Phone Number
+    if (!RegExp(r'^\d{10}$').hasMatch(telephoneController.text)) {
+      _showValidationError('Invalid phone number. It should be 10 digits long.');
+      return false;
+    }
+
+    // Validate Age
+    int? age = int.tryParse(ageController.text);
+    if (age == null || age < 1 || age > 120) {
+      _showValidationError('Invalid age. It should be a number between 1 and 120.');
+      return false;
+    }
+
+    // Validate Postal Code (for this example, we'll assume postal code should be alphanumeric)
+    if (!RegExp(r'^[a-zA-Z0-9]{3,10}$').hasMatch(postalCodeController.text)) {
+      _showValidationError('Invalid postal code. It should be 3-10 alphanumeric characters.');
+      return false;
+    }
+
+    return true;
+  }
+
+  void _showValidationError(String message) {
+    ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(message)));
   }
 
   Future<void> deleteUserProfile() async {
@@ -126,10 +159,7 @@ class _ProfilePageState extends State<EditProfile> {
                 const SizedBox(height: 20),
                 ElevatedButton(
                   onPressed: () async {
-                    await updateProfile();
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(content: Text('Profile updated successfully!')),
-                    );
+                    await updateProfile();  // Validate and update profile on button press
                     Navigator.of(context).pop(); // Navigate back to the previous page
                   },
                   style: ElevatedButton.styleFrom(
