@@ -38,7 +38,7 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: (selectedIndex == 0 ||
+      appBar: (
               selectedIndex == 3) // Show AppBar for home and profile only
           ? AppBar(
               title: const Center(
@@ -63,7 +63,7 @@ class _HomeScreenState extends State<HomeScreen> {
               decoration: BoxDecoration(
                 gradient: LinearGradient(
                   colors: [
-                    Colors.blue[800]!, // Darker background for higher contrast
+                    Colors.black, // Darker background for higher contrast
                     Colors.blue[600]!,
                   ],
                   begin: Alignment.topCenter,
