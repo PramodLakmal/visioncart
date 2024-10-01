@@ -86,12 +86,14 @@ class _ItemTileState extends State<ItemTile> {
           children: [
             Row(
               children: [
-                Image(
-                  image: NetworkImage(widget.singleItem.image),
-                  width: 100,
-                  height: 100,
+                Expanded(
+                  child: Image(
+                    image: NetworkImage(widget.singleItem.image),
+                    width: double.infinity,
+                    height: 100,
+                    fit: BoxFit.cover,
+                  ),
                 ),
-                const Spacer(),
               ],
             ),
             Row(
