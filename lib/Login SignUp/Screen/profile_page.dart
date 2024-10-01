@@ -41,7 +41,7 @@ class _ProfilePageState extends State<ProfilePage> {
     label: '$label: $value', // Screen reader will read this out
     child: Container(
       width: double.infinity, // Make the container take the full width
-      height: 110, // Fixed height for uniformity
+      height: 130, // Fixed height for uniformity
       margin: const EdgeInsets.symmetric(vertical: 10, horizontal: 12),
       padding: const EdgeInsets.all(15),
       decoration: BoxDecoration(
@@ -128,26 +128,32 @@ Widget build(BuildContext context) {
                     ),
                     const SizedBox(height: 30),
                     // Info boxes for user data
-                    _buildInfoBox("Email", userData?['email'] ?? 'No Email'),
-                    _buildInfoBox("Username", userData?['username'] ?? 'No Username'),
-                    _buildInfoBox("Telephone", userData?['telephone'] ?? 'No Telephone'),
-                    _buildInfoBox("Address", userData?['address'] ?? 'No Address'),
-                    _buildInfoBox("Age", userData?['age'] ?? 'No Age'),
-                    _buildInfoBox("Country", userData?['country'] ?? 'No Country'),
-                    _buildInfoBox("Postal Code", userData?['postalCode'] ?? 'No Postal Code'),
+                    _buildInfoBox("Email", userData?['email'] ?? ''),
+                    _buildInfoBox("Username", userData?['username'] ?? ''),
+                    _buildInfoBox("Telephone", userData?['telephone'] ?? ''),
+                    _buildInfoBox("Address", userData?['address'] ?? ''),
+                    _buildInfoBox("Age", userData?['age'] ?? ''),
+                    _buildInfoBox("Country", userData?['country'] ?? ''),
+                    _buildInfoBox("Postal Code", userData?['postalCode'] ?? ''),
                     const SizedBox(height: 40),
                     // Edit Profile Button
                     Semantics(
                       button: true,
                       label: 'Edit Profile',
                       child: ElevatedButton(
-                        onPressed: () {
-                          Navigator.push(
+                        onPressed: () async {
+                          // Navigate to the EditProfile page and wait for the result
+                          final result = await Navigator.push(
                             context,
                             MaterialPageRoute(
                               builder: (context) => const EditProfile(),
                             ),
                           );
+
+                          // If the result is true, refresh the user data
+                          if (result == true) {
+                            _fetchUserData(); // Refresh the user data
+                          }
                         },
                         style: ElevatedButton.styleFrom(
                           backgroundColor: Colors.white,

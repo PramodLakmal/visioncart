@@ -1,5 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:local_auth/local_auth.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:visioncart/Login%20SignUp/Widget/button.dart';
 import 'package:visioncart/Login%20With%20Google/google_auth.dart';
 import 'package:visioncart/Password%20Forgot/forgot_password.dart';
@@ -24,7 +26,7 @@ class _SignupScreenState extends State<LoginScreen> {
   final TextEditingController passwordController = TextEditingController();
   bool isLoading = false;
 
-  FingerprintAuth _fingerprintAuth = FingerprintAuth(); // Instantiate the FingerprintAuth class
+// Instantiate the FingerprintAuth class
 
   @override
   void dispose() {
@@ -35,61 +37,80 @@ class _SignupScreenState extends State<LoginScreen> {
 
   // Email and password authentication part
   void loginUser() async {
-    setState(() {
-      isLoading = true;
-    });
-    // Sign up user using our auth method
-    String res = await AuthMethod().loginUser(
-        email: emailController.text, password: passwordController.text);
+  setState(() {
+    isLoading = true;
+  });
+  // Sign up user using our auth method
+  String res = await AuthMethod().loginUser(
+      email: emailController.text, password: passwordController.text);
 
+  if (res == "admin" || res == "user") {
+    // Store user credentials for future fingerprint login
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    await prefs.setString('email', emailController.text);
+    await prefs.setString('password', passwordController.text);
+    
     if (res == "admin") {
       Navigator.of(context).pushReplacement(
         MaterialPageRoute(
           builder: (context) => const AdminDashboard(), // Admin screen
         ),
       );
-    } else if (res == "user") {
+    } else {
       Navigator.of(context).pushReplacement(
         MaterialPageRoute(
           builder: (context) => const HomeScreen(), // User screen
         ),
       );
-    } else {
-      showSnackBar(context, res); // Show any error messages
     }
+  } else {
+    showSnackBar(context, res); // Show any error messages
   }
+}
 
   // Fingerprint login method
   void handleFingerprintLogin() async {
-    bool isAuthenticated = await _fingerprintAuth.authenticate();
-    if (isAuthenticated) {
-      // User is authenticated, check their role
-      User? currentUser = FirebaseAuth.instance.currentUser;
-      if (currentUser != null) {
-        DocumentSnapshot snapshot = await FirebaseFirestore.instance
-            .collection('users')
-            .doc(currentUser.uid)
-            .get();
+  final LocalAuthentication auth = LocalAuthentication();
 
-        Map<String, dynamic>? data = snapshot.data() as Map<String, dynamic>?;
-        if (data != null && data['isAdmin'] == true) {
-          // Navigate to admin dashboard
-          Navigator.pushReplacement(
-            context,
-            MaterialPageRoute(builder: (context) => const AdminDashboard()),
+  try {
+    bool authenticated = await auth.authenticate(
+      localizedReason: 'Scan your fingerprint to log in',
+      options: const AuthenticationOptions(biometricOnly: true),
+    );
+
+    if (authenticated) {
+      // Retrieve stored email and password
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      String? email = prefs.getString('email');
+      String? password = prefs.getString('password');
+
+      if (email != null && password != null) {
+        // Log the user in using saved credentials
+        String res = await AuthMethod().loginUser(email: email, password: password);
+
+        if (res == "admin") {
+          Navigator.of(context).pushReplacement(
+            MaterialPageRoute(
+              builder: (context) => const AdminDashboard(), // Admin screen
+            ),
+          );
+        } else if (res == "user") {
+          Navigator.of(context).pushReplacement(
+            MaterialPageRoute(
+              builder: (context) => const HomeScreen(), // User screen
+            ),
           );
         } else {
-          // Navigate to user home screen
-          Navigator.pushReplacement(
-            context,
-            MaterialPageRoute(builder: (context) => const HomeScreen()),
-          );
+          showSnackBar(context, res); // Show any error messages
         }
+      } else {
+        showSnackBar(context, 'No login details found. Please log in manually.');
       }
-    } else {
-      showSnackBar(context, "Fingerprint authentication failed.");
     }
+  } catch (e) {
+    showSnackBar(context, 'Fingerprint authentication failed.');
   }
+}
 
   @override
   Widget build(BuildContext context) {
@@ -137,7 +158,8 @@ class _SignupScreenState extends State<LoginScreen> {
 
               // Google login button
               Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 25, vertical: 10),
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 25, vertical: 10),
                 child: ElevatedButton(
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Colors.black,
@@ -153,21 +175,25 @@ class _SignupScreenState extends State<LoginScreen> {
                     if (result == "success") {
                       User? currentUser = FirebaseAuth.instance.currentUser;
                       if (currentUser != null) {
-                        DocumentSnapshot snapshot = await FirebaseFirestore.instance
+                        DocumentSnapshot snapshot = await FirebaseFirestore
+                            .instance
                             .collection('users')
                             .doc(currentUser.uid)
                             .get();
 
-                        Map<String, dynamic>? data = snapshot.data() as Map<String, dynamic>?;
+                        Map<String, dynamic>? data =
+                            snapshot.data() as Map<String, dynamic>?;
                         if (data != null && data['isAdmin'] == true) {
                           Navigator.pushReplacement(
                             context,
-                            MaterialPageRoute(builder: (context) => const AdminDashboard()),
+                            MaterialPageRoute(
+                                builder: (context) => const AdminDashboard()),
                           );
                         } else {
                           Navigator.pushReplacement(
                             context,
-                            MaterialPageRoute(builder: (context) => const HomeScreen()),
+                            MaterialPageRoute(
+                                builder: (context) => const HomeScreen()),
                           );
                         }
                       }
@@ -203,7 +229,8 @@ class _SignupScreenState extends State<LoginScreen> {
 
               // Fingerprint sign-in button
               Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 25, vertical: 10),
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 25, vertical: 10),
                 child: ElevatedButton(
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Colors.black,
@@ -232,7 +259,8 @@ class _SignupScreenState extends State<LoginScreen> {
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    const Text("Don't have an account? ", style: TextStyle(color: Colors.white, fontSize: 16)),
+                    const Text("Don't have an account? ",
+                        style: TextStyle(color: Colors.white, fontSize: 16)),
                     GestureDetector(
                       onTap: () {
                         Navigator.of(context).push(
@@ -244,7 +272,9 @@ class _SignupScreenState extends State<LoginScreen> {
                       child: const Text(
                         "SignUp",
                         style: TextStyle(
-                            fontWeight: FontWeight.bold, color: Colors.white, fontSize: 18),
+                            fontWeight: FontWeight.bold,
+                            color: Colors.white,
+                            fontSize: 18),
                       ),
                     )
                   ],

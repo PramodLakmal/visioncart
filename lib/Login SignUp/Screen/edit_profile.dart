@@ -85,6 +85,16 @@ class _ProfilePageState extends State<EditProfile> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+        title: const Text('Edit Profile', style: TextStyle(color: Colors.white, fontSize: 24, fontWeight: FontWeight.bold)),
+        backgroundColor: Colors.blueGrey[900],
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back, color: Colors.white),
+          onPressed: () {
+            Navigator.pop(context, true); // Go back to the previous screen
+          },
+        ),
+      ),
       backgroundColor: Colors.black87, // Background color for the entire page
       body: Center( // Centering the content
         child: SingleChildScrollView(
@@ -117,7 +127,10 @@ class _ProfilePageState extends State<EditProfile> {
                 ElevatedButton(
                   onPressed: () async {
                     await updateProfile();
-                    ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Profile updated successfully!')));
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(content: Text('Profile updated successfully!')),
+                    );
+                    Navigator.of(context).pop(); // Navigate back to the previous page
                   },
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Colors.greenAccent,
@@ -125,7 +138,10 @@ class _ProfilePageState extends State<EditProfile> {
                     textStyle: const TextStyle(fontSize: 20),
                     foregroundColor: Colors.white,
                   ),
-                  child: const Text('Update Profile', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+                  child: const Text(
+                    'Update Profile',
+                    style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                  ),
                 ),
                 const SizedBox(height: 20),
                 ElevatedButton(
@@ -153,7 +169,10 @@ class _ProfilePageState extends State<EditProfile> {
                     textStyle: const TextStyle(fontSize: 20),
                     foregroundColor: Colors.white,
                   ),
-                  child: const Text('Delete Profile', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+                  child: const Text(
+                    'Delete Profile',
+                    style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                  ),
                 ),
               ],
             ),
