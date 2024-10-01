@@ -85,7 +85,7 @@ class _SignupScreenState extends State<LoginScreen> {
       String? password = prefs.getString('password');
 
       if (email != null && password != null) {
-        // Log the user in using saved credentials
+        // Log the user in using saved credential
         String res = await AuthMethod().loginUser(email: email, password: password);
 
         if (res == "admin") {
