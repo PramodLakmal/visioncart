@@ -44,7 +44,7 @@ class _AdminLoginState extends State<AdminLogin> {
         if (isAdmin) {
           Navigator.pushReplacement(
             context,
-            MaterialPageRoute(builder: (context) => AdminDashboard()),  // Web Admin Dashboard
+            MaterialPageRoute(builder: (context) => const AdminDashboard()),  // Web Admin Dashboard
           );
         } else {
           // Navigate to respective dashboard

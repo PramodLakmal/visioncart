@@ -24,7 +24,7 @@ class _SignupScreenState extends State<LoginScreen> {
   final TextEditingController passwordController = TextEditingController();
   bool isLoading = false;
 
-  FingerprintAuth _fingerprintAuth = FingerprintAuth(); // Instantiate the FingerprintAuth class
+  final FingerprintAuth _fingerprintAuth = FingerprintAuth(); // Instantiate the FingerprintAuth class
 
   @override
   void dispose() {

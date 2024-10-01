@@ -1,5 +1,8 @@
-import 'package:flutter/material.dart';
+import 'package:flutter/material.dart'; 
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:pdf/pdf.dart';
+import 'package:pdf/widgets.dart' as pw;
+import 'package:printing/printing.dart';
 import 'item_form.dart';
 import '../models/item_model.dart';
 
@@ -32,12 +35,66 @@ class _ItemManagementState extends State<ItemManagement> {
     super.dispose();
   }
 
+  // Method to generate a PDF report of the items
+  Future<void> _generateReport(List<QueryDocumentSnapshot> items) async {
+    final pdf = pw.Document();
+
+    // Adding a title and a table to the PDF
+    pdf.addPage(
+      pw.Page(
+        build: (context) => pw.Column(
+          crossAxisAlignment: pw.CrossAxisAlignment.start,
+          children: [
+            pw.Text(
+              "Items Report",
+              style: pw.TextStyle(fontSize: 24, fontWeight: pw.FontWeight.bold),
+            ),
+            pw.SizedBox(height: 16),
+            pw.Table.fromTextArray(
+              context: context,
+              data: <List<String>>[
+                <String>['Name', 'Description', 'Price', 'Quantity'],
+                ...items.map(
+                  (item) {
+                    final data = item.data() as Map<String, dynamic>;
+                    return [
+                      data['name'] ?? '',
+                      data['description'] ?? '',
+                      data['price'].toString(),
+                      data['quantity'].toString(),
+                    ];
+                  },
+                ),
+              ],
+            ),
+          ],
+        ),
+      ),
+    );
+
+    // Print or save the PDF
+    await Printing.layoutPdf(onLayout: (PdfPageFormat format) async => pdf.save());
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: const Text("Item Management"),
         backgroundColor: lightBlue,
+        actions: [
+          // Icon button to generate the report
+          IconButton(
+            icon: const Icon(Icons.picture_as_pdf),
+            onPressed: () async {
+              // Fetch the list of items from Firestore
+              final snapshot = await FirebaseFirestore.instance.collection('items').get();
+              final items = snapshot.docs;
+              // Generate the PDF report
+              _generateReport(items);
+            },
+          ),
+        ],
         bottom: PreferredSize(
           preferredSize: const Size.fromHeight(56.0),
           child: Padding(
