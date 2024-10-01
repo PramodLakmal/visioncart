@@ -94,6 +94,9 @@ class _CartState extends State<Cart> {
                     child: ElevatedButton(
                         style: ElevatedButton.styleFrom(
                           minimumSize: const Size(200, 60),
+                          backgroundColor:
+                              Colors.blue, // Background color of the button
+                          // Text color
                         ),
                         onPressed: () {
                           double grandTotal =
