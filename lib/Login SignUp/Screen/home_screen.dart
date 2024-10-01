@@ -38,24 +38,6 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: (selectedIndex == 0 ||
-              selectedIndex == 3) // Show AppBar for home and profile only
-          ? AppBar(
-              title: const Center(
-                child: Text(
-                  'VisionCart',
-                  style: TextStyle(
-                    fontWeight: FontWeight.bold,
-                    fontSize: 28,
-                    letterSpacing: 1.2,
-                  ),
-                ),
-              ),
-              backgroundColor: Colors.black87,
-              foregroundColor: Colors.white,
-              elevation: 4,
-            )
-          : null, // No AppBar for orders and cart pages
       body: selectedIndex == 0
           ? Container(
               width: double.infinity,
@@ -63,7 +45,7 @@ class _HomeScreenState extends State<HomeScreen> {
               decoration: BoxDecoration(
                 gradient: LinearGradient(
                   colors: [
-                    Colors.blue[800]!, // Darker background for higher contrast
+                    Colors.black, // Darker background for higher contrast
                     Colors.blue[600]!,
                   ],
                   begin: Alignment.topCenter,
