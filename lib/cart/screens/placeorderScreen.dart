@@ -117,8 +117,17 @@ class _PlaceOrderState extends State<PlaceOrder> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Place Order'),
-        backgroundColor: Colors.blue,
+        title: const Center(
+            child: Text(
+          'Place Order',
+          style: const TextStyle(
+              color: Color(0xFFFFFFFF),
+              fontWeight: FontWeight.bold,
+              fontSize: 28,
+              letterSpacing: 1.2),
+        )),
+        backgroundColor: Colors.black87,
+        foregroundColor: Colors.white,
       ),
       body: Padding(
         padding: const EdgeInsets.all(20.0),
@@ -131,9 +140,14 @@ class _PlaceOrderState extends State<PlaceOrder> {
                 itemBuilder: (context, index) {
                   final item = widget.cartItems[index];
                   return ListTile(
-                    title: Text(item.name),
-                    subtitle:
-                        Text('Quantity: ${item.quantity} | Rs: ${item.price}'),
+                    title: Text(item.name,
+                        style: const TextStyle(
+                            fontSize: 30, fontWeight: FontWeight.bold)),
+                    subtitle: Text(
+                      'Quantity: ${item.quantity} | Rs: ${item.price}',
+                      style: const TextStyle(
+                          fontSize: 20, fontWeight: FontWeight.bold),
+                    ),
                   );
                 },
               ),
@@ -141,9 +155,10 @@ class _PlaceOrderState extends State<PlaceOrder> {
             const SizedBox(height: 10),
             // Payment Options
             const Text('Select Payment Option:',
-                style: TextStyle(fontSize: 18)),
+                style: TextStyle(fontSize: 25, fontWeight: FontWeight.bold)),
             ListTile(
-              title: const Text('Pay at Shop'),
+              title: const Text('Pay at Shop',
+                  style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
               leading: Radio(
                 value: 'Pay at Shop',
                 groupValue: paymentOption,
@@ -151,7 +166,8 @@ class _PlaceOrderState extends State<PlaceOrder> {
               ),
             ),
             ListTile(
-              title: const Text('Cash on Delivery (+ Rs. 250)'),
+              title: const Text('Cash on Delivery (+ Rs. 250)',
+                  style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
               leading: Radio(
                 value: 'Cash on Delivery',
                 groupValue: paymentOption,
@@ -176,16 +192,21 @@ class _PlaceOrderState extends State<PlaceOrder> {
             // Display Final Total
             Text('Total: Rs ${finalTotal.toStringAsFixed(2)}',
                 style:
-                    const TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+                    const TextStyle(fontSize: 25, fontWeight: FontWeight.bold)),
             const SizedBox(height: 20),
             // Place Order Button
             ElevatedButton(
               onPressed: _submitOrder,
               style: ElevatedButton.styleFrom(
+                backgroundColor: Colors.black,
+                foregroundColor: Colors.white,
                 padding:
                     const EdgeInsets.symmetric(horizontal: 50, vertical: 15),
               ),
-              child: const Text('Place Order'),
+              child: const Text(
+                'Place Order',
+                style: TextStyle(fontSize: 25),
+              ),
             ),
           ],
         ),

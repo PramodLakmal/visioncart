@@ -127,7 +127,7 @@ class _ItemTileState extends State<ItemTile> {
                   child: Text(
                     widget.singleItem.description,
                     style: const TextStyle(
-                      fontSize: 10,
+                      fontSize: 25,
                       fontWeight: FontWeight.bold,
                     ),
                   ),

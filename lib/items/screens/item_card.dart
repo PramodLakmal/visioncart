@@ -57,8 +57,17 @@ class _ItemCardState extends State<ItemCard> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Item Details'),
-        backgroundColor: const Color.fromRGBO(33, 150, 243, 1),
+        foregroundColor: Colors.white,
+        title: const Center(
+            child: Text(
+          'Item Details',
+          style: const TextStyle(
+              color: Color(0xFFFFFFFF),
+              fontWeight: FontWeight.bold,
+              fontSize: 28,
+              letterSpacing: 1.2),
+        )),
+        backgroundColor: Colors.black87,
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
           onPressed: () {
@@ -90,7 +99,7 @@ class _ItemCardState extends State<ItemCard> {
               Text(
                 widget.name,
                 style: const TextStyle(
-                  fontSize: 28,
+                  fontSize: 36,
                   fontWeight: FontWeight.bold,
                   color: Colors.black87,
                 ),
@@ -101,8 +110,9 @@ class _ItemCardState extends State<ItemCard> {
               Text(
                 widget.description,
                 style: const TextStyle(
-                  fontSize: 16,
+                  fontSize: 20,
                   color: Color.fromARGB(255, 0, 0, 0),
+                  fontWeight: FontWeight.bold,
                 ),
               ),
               const SizedBox(height: 16),
@@ -112,9 +122,9 @@ class _ItemCardState extends State<ItemCard> {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Text(
-                    '\$${widget.price.toStringAsFixed(2)}',
+                    '\Rs: ${widget.price.toStringAsFixed(2)}',
                     style: const TextStyle(
-                      fontSize: 24,
+                      fontSize: 28,
                       fontWeight: FontWeight.bold,
                       color: Color.fromARGB(255, 0, 0, 0),
                     ),
@@ -122,8 +132,8 @@ class _ItemCardState extends State<ItemCard> {
                   Text(
                     'Quantity: ${_quantity.toInt()}',
                     style: const TextStyle(
-                      fontSize: 18,
-                      color: Colors.black54,
+                      fontSize: 22,
+                      color: Colors.black,
                     ),
                   ),
                 ],
@@ -183,7 +193,7 @@ class _ItemCardState extends State<ItemCard> {
                     child: const Text(
                       'Add to Cart',
                       style: TextStyle(
-                          fontSize: 16,
+                          fontSize: 20,
                           fontWeight: FontWeight.bold,
                           color: Colors.white),
                     ),
@@ -220,7 +230,7 @@ class _ItemCardState extends State<ItemCard> {
                     child: const Text(
                       'Buy Now',
                       style: TextStyle(
-                        fontSize: 16,
+                        fontSize: 20,
                         fontWeight: FontWeight.bold,
                         color: Colors.white,
                       ),

@@ -111,9 +111,19 @@ class _CheckoutState extends State<Checkout> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.blueGrey[800], // Add background color here
       appBar: AppBar(
-        title: const Text('Checkout'),
-        backgroundColor: Colors.blue,
+        title: const Center(
+            child: Text(
+          'Checkout',
+          style: TextStyle(
+              color: Color(0xFFFFFFFF),
+              fontWeight: FontWeight.bold,
+              fontSize: 28,
+              letterSpacing: 1.2),
+        )),
+        backgroundColor: Colors.black87,
+        foregroundColor: Colors.white,
       ),
       body: widget.buyNowItem != null
           ? _buildBuyNowItem() // Build the checkout page for Buy Now item
@@ -154,10 +164,12 @@ class _CheckoutState extends State<Checkout> {
                     ),
                     Row(
                       children: [
-                        Text(
-                          widget.buyNowItem!.name,
-                          style: const TextStyle(
-                              fontSize: 20, fontWeight: FontWeight.bold),
+                        Flexible(
+                          child: Text(
+                            widget.buyNowItem!.name,
+                            style: const TextStyle(
+                                fontSize: 20, fontWeight: FontWeight.bold),
+                          ),
                         ),
                         const Spacer(),
                         Text(
@@ -168,10 +180,12 @@ class _CheckoutState extends State<Checkout> {
                     ),
                     Row(
                       children: [
-                        Text(
-                          widget.buyNowItem!.description,
-                          style: const TextStyle(
-                              fontSize: 20, fontWeight: FontWeight.bold),
+                        Flexible(
+                          child: Text(
+                            widget.buyNowItem!.description,
+                            style: const TextStyle(
+                                fontSize: 20, fontWeight: FontWeight.normal),
+                          ),
                         ),
                       ],
                     ),
@@ -253,33 +267,41 @@ class _CheckoutState extends State<Checkout> {
                             ),
                             Row(
                               children: [
-                                Text(
-                                  cartItems[index].name,
-                                  style: const TextStyle(
-                                      fontSize: 20,
-                                      fontWeight: FontWeight.bold),
+                                Flexible(
+                                  child: Text(
+                                    cartItems[index].name,
+                                    style: const TextStyle(
+                                        fontSize: 25,
+                                        fontWeight: FontWeight.bold),
+                                  ),
                                 ),
                                 const Spacer(),
                                 Text(
                                   'Rs: ${cartItems[index].price}',
-                                  style: const TextStyle(fontSize: 20),
-                                ),
-                              ],
-                            ),
-                            Row(
-                              children: [
-                                Text(
-                                  cartItems[index].description,
                                   style: const TextStyle(
                                       fontSize: 20,
                                       fontWeight: FontWeight.bold),
+                                ),
+                              ],
+                            ),
+                            const SizedBox(height: 20),
+                            Row(
+                              children: [
+                                Flexible(
+                                  child: Text(
+                                    cartItems[index].description,
+                                    style: const TextStyle(
+                                        fontSize: 20,
+                                        fontWeight: FontWeight.bold),
+                                  ),
                                 ),
                               ],
                             ),
                             const SizedBox(height: 10),
                             Text(
                               'Quantity: ${cartItems[index].quantity}',
-                              style: const TextStyle(fontSize: 16),
+                              style: const TextStyle(
+                                  fontSize: 16, fontWeight: FontWeight.bold),
                             ),
                           ],
                         ),
@@ -300,27 +322,34 @@ class _CheckoutState extends State<Checkout> {
 
   // Footer section for both "Buy Now" and cart items
   Widget _buildFooter({required List<Item> cartItems, double? total}) {
-    double footerTotal = total ??
-        widget.grandTotal; // Use the total passed from Buy Now or grandTotal
+    double footerTotal = total ?? widget.grandTotal;
 
     return Container(
-      color: Colors.blue,
+      color: Colors.black87,
       height: 150,
-      child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 60),
-        child: Row(
-          children: [
-            ElevatedButton(
-              onPressed: _placeOrder, // Update the onPressed to place the order
-              child: const Text('Place Order'),
+      width: double.infinity,
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Text(
+              'Total: Rs $footerTotal',
+              style: const TextStyle(
+                  color: Colors.white,
+                  fontSize: 25,
+                  fontWeight: FontWeight.bold),
             ),
-            const Spacer(),
-            Text(
-              ' Total: Rs ${footerTotal}',
-              style: const TextStyle(fontSize: 20),
+          ),
+          ElevatedButton(
+            onPressed: _placeOrder,
+            child: const Text(
+              'Place Order',
+              style: TextStyle(
+                  fontSize: 20, fontWeight: FontWeight.bold, letterSpacing: 2),
             ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }
