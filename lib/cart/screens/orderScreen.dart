@@ -119,8 +119,18 @@ class _OrdersState extends State<Orders> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('My Orders'),
-        backgroundColor: Colors.blue,
+        title: const Center(
+          child: Text(
+            'My Orders',
+            style: TextStyle(
+                color: Color(0xFFFFFFFF),
+                fontWeight: FontWeight.bold,
+                fontSize: 28,
+                letterSpacing: 1.2),
+          ),
+        ),
+        backgroundColor: Colors.black87,
+        foregroundColor: Colors.white,
         actions: [
           // Toggle Button to switch between 1x and 2x font sizes
           TextButton(
@@ -132,221 +142,184 @@ class _OrdersState extends State<Orders> {
           ),
         ],
       ),
-      body: StreamBuilder<QuerySnapshot>(
-        stream: _ordersStream,
-        builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            return const Center(child: CircularProgressIndicator());
-          }
+      body: Container(
+        color: Colors.black87, // Set background color for the entire screen
+        child: StreamBuilder<QuerySnapshot>(
+          stream: _ordersStream,
+          builder: (context, snapshot) {
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              return const Center(child: CircularProgressIndicator());
+            }
 
-          if (snapshot.hasError) {
-            return Center(child: Text('Error: ${snapshot.error}'));
-          }
+            if (snapshot.hasError) {
+              return Center(child: Text('Error: ${snapshot.error}'));
+            }
 
-          if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
-            return const Center(child: Text('No orders found.'));
-          }
+            if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
+              return const Center(child: Text('No orders found.'));
+            }
 
-          final orders = snapshot.data!.docs;
+            final orders = snapshot.data!.docs;
 
-          return ListView.builder(
-            itemCount: orders.length,
-            itemBuilder: (context, index) {
-              final orderDoc = orders[index];
-              final order = orderDoc.data() as Map<String, dynamic>;
-              final items = order['items'] as List<dynamic>;
-              final Timestamp orderTimestamp = order['timestamp'] as Timestamp;
-              final String paymentMethod = order['paymentMethod'] as String;
-              final String status = order['status'] ?? 'pending';
+            return ListView.builder(
+              itemCount: orders.length,
+              itemBuilder: (context, index) {
+                final orderDoc = orders[index];
+                final order = orderDoc.data() as Map<String, dynamic>;
+                final items = order['items'] as List<dynamic>;
+                final Timestamp orderTimestamp =
+                    order['timestamp'] as Timestamp;
+                final String paymentMethod = order['paymentMethod'] as String;
+                final String status = order['status'] ?? 'pending';
 
-              return Card(
-                margin: const EdgeInsets.all(8.0),
-                child: Padding(
-                  padding: const EdgeInsets.all(10.0),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      // Main Title
-                      Center(
-                        child: Text(
-                          'Your Order',
+                return Card(
+                  color: Colors.white,
+                  margin: const EdgeInsets.all(8.0),
+                  child: Padding(
+                    padding: const EdgeInsets.all(10.0),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        const SizedBox(height: 10),
+                        Text('Order ID: ${orderDoc.id}',
+                            style: TextStyle(
+                                fontSize: 16 * fontSizeMultiplier,
+                                fontWeight: FontWeight.bold)),
+                        Text(
+                          'Order Total: Rs ${order['total']}',
                           style: TextStyle(
-                            fontSize: 20 * fontSizeMultiplier,
+                            fontSize: 16 * fontSizeMultiplier,
                             fontWeight: FontWeight.bold,
                           ),
                         ),
-                      ),
-                      const SizedBox(height: 10),
-                      // Order ID
-                      Text('Order ID: ${orderDoc.id}',
-                          style: TextStyle(
-                              fontSize: 16 * fontSizeMultiplier,
-                              fontWeight: FontWeight.bold)),
-
-                      // Order Total
-                      Text(
-                        'Order Total: Rs ${order['total']}',
-                        style: TextStyle(
-                          fontSize: 16 * fontSizeMultiplier,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                      const SizedBox(height: 10),
-
-                      // Payment Method
-                      Text('Payment Method: $paymentMethod',
-                          style: TextStyle(fontSize: 14 * fontSizeMultiplier)),
-                      const SizedBox(height: 10),
-
-                      // Table Header
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Expanded(
-                            child: Text('Item Name',
-                                style: TextStyle(
-                                    fontSize: 14 * fontSizeMultiplier)),
-                          ),
-                          Expanded(
-                            child: Text('Quantity',
-                                style: TextStyle(
-                                    fontSize: 14 * fontSizeMultiplier)),
-                          ),
-                          Expanded(
-                            child: Text('Unit Price',
-                                style: TextStyle(
-                                    fontSize: 14 * fontSizeMultiplier)),
-                          ),
-                          Expanded(
-                            child: Text('Amount',
-                                style: TextStyle(
-                                    fontSize: 14 * fontSizeMultiplier)),
-                          ),
-                        ],
-                      ),
-                      const Divider(height: 10),
-
-                      // Order Items
-                      ...items.map(
-                        (item) => Row(
+                        const SizedBox(height: 10),
+                        Text('Payment Method: $paymentMethod',
+                            style:
+                                TextStyle(fontSize: 14 * fontSizeMultiplier)),
+                        const SizedBox(height: 10),
+                        Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
                             Expanded(
-                              child: Text(
-                                item['name'],
-                                style: TextStyle(
-                                    fontSize: 14 * fontSizeMultiplier),
-                              ),
+                              child: Text('Item Name',
+                                  style: TextStyle(
+                                      fontSize: 14 * fontSizeMultiplier)),
                             ),
                             Expanded(
-                              child: Text(
-                                '${item['quantity']}',
-                                style: TextStyle(
-                                    fontSize: 14 * fontSizeMultiplier),
-                              ),
+                              child: Text('Quantity',
+                                  style: TextStyle(
+                                      fontSize: 14 * fontSizeMultiplier)),
                             ),
                             Expanded(
-                              child: Text(
-                                'Rs ${item['price']}',
-                                style: TextStyle(
-                                    fontSize: 14 * fontSizeMultiplier),
-                              ),
+                              child: Text('Unit Price',
+                                  style: TextStyle(
+                                      fontSize: 14 * fontSizeMultiplier)),
                             ),
                             Expanded(
-                              child: Text(
-                                'Rs ${item['price'] * item['quantity']}',
-                                textAlign: TextAlign.right,
-                                style: TextStyle(
-                                    fontSize: 14 * fontSizeMultiplier),
-                              ),
+                              child: Text('Amount',
+                                  style: TextStyle(
+                                      fontSize: 14 * fontSizeMultiplier)),
                             ),
                           ],
                         ),
-                      ),
-                      const Divider(height: 10),
-
-                      // Order Placed
-                      Text(
-                        'Order Placed: ${DateFormat.yMMMd().add_jm().format(orderTimestamp.toDate())}',
-                        style: TextStyle(fontSize: 14 * fontSizeMultiplier),
-                      ),
-                      const SizedBox(height: 10),
-                      // Show a message based on the order status
-                      if (status == 'packed') ...[
-                        if (paymentMethod == 'Cash on Delivery')
-                          Text(
-                            'Order is on the way',
-                            style: TextStyle(
-                                fontSize: 14 * fontSizeMultiplier,
-                                color: Colors.green,
-                                fontWeight: FontWeight.bold),
-                          )
-                        else
-                          Text(
-                            'Pick your order at the shop',
-                            style: TextStyle(
-                                fontSize: 14 * fontSizeMultiplier,
-                                color: Colors.green,
-                                fontWeight: FontWeight.bold),
+                        const Divider(height: 10),
+                        ...items.map(
+                          (item) => Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Expanded(
+                                child: Text(
+                                  item['name'],
+                                  style: TextStyle(
+                                      fontSize: 14 * fontSizeMultiplier),
+                                ),
+                              ),
+                              Expanded(
+                                child: Text(
+                                  '${item['quantity']}',
+                                  style: TextStyle(
+                                      fontSize: 14 * fontSizeMultiplier),
+                                ),
+                              ),
+                              Expanded(
+                                child: Text(
+                                  'Rs ${item['price']}',
+                                  style: TextStyle(
+                                      fontSize: 14 * fontSizeMultiplier),
+                                ),
+                              ),
+                              Expanded(
+                                child: Text(
+                                  'Rs ${item['price'] * item['quantity']}',
+                                  textAlign: TextAlign.right,
+                                  style: TextStyle(
+                                      fontSize: 14 * fontSizeMultiplier),
+                                ),
+                              ),
+                            ],
                           ),
-                      ],
-                      const SizedBox(height: 10),
-                      // Show Delete or Confirmed based on time since order was placed
-                      if (_canCancelOrder(orderTimestamp))
+                        ),
+                        const Divider(height: 10),
+                        Text(
+                          'Order Placed: ${DateFormat.yMMMd().add_jm().format(orderTimestamp.toDate())}',
+                          style: TextStyle(fontSize: 14 * fontSizeMultiplier),
+                        ),
+                        const SizedBox(height: 10),
+                        if (status == 'packed') ...[
+                          if (paymentMethod == 'Cash on Delivery')
+                            Text(
+                              'Order is on the way',
+                              style: TextStyle(
+                                  fontSize: 14 * fontSizeMultiplier,
+                                  color: Colors.black,
+                                  fontWeight: FontWeight.bold),
+                            )
+                          else
+                            Text(
+                              'Pick your order at the shop',
+                              style: TextStyle(
+                                  fontSize: 14 * fontSizeMultiplier,
+                                  color: Colors.black,
+                                  fontWeight: FontWeight.bold),
+                            ),
+                        ],
+                        const SizedBox(height: 10),
                         Center(
                           child: ElevatedButton(
-                            onPressed: () => _cancelOrder(context, orderDoc.id),
                             style: ElevatedButton.styleFrom(
-                              backgroundColor: Colors.red,
-                            ),
-                            child: Text('Cancel Order',
+                                backgroundColor: Colors.black,
+                                foregroundColor: Colors.white),
+                            onPressed: () =>
+                                _downloadReceipt(order, orderDoc.id),
+                            child: Text('Download Receipt',
                                 style: TextStyle(
                                     fontSize: 14 * fontSizeMultiplier)),
                           ),
-                        )
-                      else
-                        Center(
-                          child: Text(
-                            'Confirmed',
-                            style: TextStyle(
-                                fontSize: 14 * fontSizeMultiplier,
-                                color: Colors.green,
-                                fontWeight: FontWeight.bold),
+                        ),
+                        if (_canCancelOrder(orderTimestamp))
+                          Center(
+                            child: ElevatedButton(
+                              style: ElevatedButton.styleFrom(
+                                  backgroundColor: Colors.black,
+                                  foregroundColor: Colors.white),
+                              onPressed: () =>
+                                  _cancelOrder(context, orderDoc.id),
+                              child: Text(
+                                'Cancel Order',
+                                style: TextStyle(
+                                    fontSize: 14 * fontSizeMultiplier,
+                                    color: Colors.white),
+                              ),
+                            ),
                           ),
-                        ),
-
-                      const SizedBox(height: 10),
-                      // Download Receipt Button
-                      Center(
-                        child: ElevatedButton(
-                          onPressed: () => _downloadReceipt(order, orderDoc.id),
-                          child: Text('Download Receipt',
-                              style:
-                                  TextStyle(fontSize: 14 * fontSizeMultiplier)),
-                        ),
-                      ),
-
-                      const SizedBox(height: 10),
-
-                      // Quote
-                      Center(
-                        child: Text(
-                          'Thank you for shopping with us!',
-                          style: TextStyle(
-                            fontStyle: FontStyle.italic,
-                            fontSize: 14 * fontSizeMultiplier,
-                            fontWeight: FontWeight.bold,
-                            color: Colors.black,
-                          ),
-                        ),
-                      ),
-                    ],
+                      ],
+                    ),
                   ),
-                ),
-              );
-            },
-          );
-        },
+                );
+              },
+            );
+          },
+        ),
       ),
     );
   }
