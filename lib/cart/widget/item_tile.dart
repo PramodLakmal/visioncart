@@ -87,11 +87,15 @@ class _ItemTileState extends State<ItemTile> {
             Row(
               children: [
                 Expanded(
-                  child: Image(
-                    image: NetworkImage(widget.singleItem.image),
-                    width: double.infinity,
-                    height: 100,
-                    fit: BoxFit.cover,
+                  child: ClipRRect(
+                    borderRadius:
+                        BorderRadius.circular(15.0), // Add border radius here
+                    child: Image(
+                      image: NetworkImage(widget.singleItem.image),
+                      width: double.infinity,
+                      height: 250,
+                      fit: BoxFit.cover,
+                    ),
                   ),
                 ),
               ],

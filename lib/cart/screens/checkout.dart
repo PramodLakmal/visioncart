@@ -138,6 +138,22 @@ class _CheckoutState extends State<Checkout> {
                   children: [
                     Row(
                       children: [
+                        Expanded(
+                          child: ClipRRect(
+                            borderRadius: BorderRadius.circular(
+                                15.0), // Add border radius here
+                            child: Image(
+                              image: NetworkImage(widget.buyNowItem!.image),
+                              width: double.infinity,
+                              height: 250,
+                              fit: BoxFit.cover,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                    Row(
+                      children: [
                         Text(
                           widget.buyNowItem!.name,
                           style: const TextStyle(
@@ -147,6 +163,15 @@ class _CheckoutState extends State<Checkout> {
                         Text(
                           'Rs: ${widget.buyNowItem!.price}',
                           style: const TextStyle(fontSize: 20),
+                        ),
+                      ],
+                    ),
+                    Row(
+                      children: [
+                        Text(
+                          widget.buyNowItem!.description,
+                          style: const TextStyle(
+                              fontSize: 20, fontWeight: FontWeight.bold),
                         ),
                       ],
                     ),
@@ -211,6 +236,23 @@ class _CheckoutState extends State<Checkout> {
                           children: [
                             Row(
                               children: [
+                                Expanded(
+                                  child: ClipRRect(
+                                    borderRadius: BorderRadius.circular(
+                                        15.0), // Add border radius here
+                                    child: Image(
+                                      image:
+                                          NetworkImage(cartItems[index].image),
+                                      width: double.infinity,
+                                      height: 250,
+                                      fit: BoxFit.cover,
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                            Row(
+                              children: [
                                 Text(
                                   cartItems[index].name,
                                   style: const TextStyle(
@@ -221,6 +263,16 @@ class _CheckoutState extends State<Checkout> {
                                 Text(
                                   'Rs: ${cartItems[index].price}',
                                   style: const TextStyle(fontSize: 20),
+                                ),
+                              ],
+                            ),
+                            Row(
+                              children: [
+                                Text(
+                                  cartItems[index].description,
+                                  style: const TextStyle(
+                                      fontSize: 20,
+                                      fontWeight: FontWeight.bold),
                                 ),
                               ],
                             ),
