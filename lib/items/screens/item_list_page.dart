@@ -69,11 +69,6 @@ class _ItemListPageState extends State<ItemListPage> {
     await _fetchItems();
   }
 
-  String capitalizeFirstLetter(String text) {
-    if (text.isEmpty) return text;
-    return text[0].toUpperCase() + text.substring(1);
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -146,9 +141,6 @@ class _ItemListPageState extends State<ItemListPage> {
                   double quantity = itemData?['quantity']?.toDouble() ?? 0.0;
                   String imageUrl = itemData?['imageUrl'] ?? '';
 
-                  // Capitalize the first letter of the item name
-                  name = capitalizeFirstLetter(name);
-
                   return GestureDetector(
                     onTap: () {
                       Navigator.push(
@@ -198,7 +190,7 @@ class _ItemListPageState extends State<ItemListPage> {
                                   name,
                                   style: const TextStyle(
                                     fontWeight: FontWeight.bold,
-                                    fontSize: 28,
+                                    fontSize: 30,
                                   ),
                                 ),
                                 const SizedBox(height: 5),
