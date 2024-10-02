@@ -3,7 +3,7 @@ import 'package:http/http.dart' as http;
 import 'package:firebase_auth/firebase_auth.dart'; // Import FirebaseAuth
 
 class VoiceflowService {
-  final String apiKey = 'api_key'; // Replace with API key
+  final String apiKey = 'VF.DM.66de77265a38744f3773919b.c4WJuPqUEb8F0ieq'; // Replace with API key
 
   // Get the current Firebase user ID
   Future<String?> _getUserId() async {
