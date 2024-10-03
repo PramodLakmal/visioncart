@@ -13,7 +13,7 @@ A Flutter project.
 <img src="VisionCart Screenshots/Screenshot_1727935081.png" width="300" />&ensp; &ensp;
 <img src="VisionCart Screenshots/Screenshot 2024-10-03 113205.png" width="300" />&ensp; &ensp;
 <img src="VisionCart Screenshots/Screenshot 2024-10-03 113233.png" width="300" />&ensp; &ensp;
-<img src="VisionCart Screenshots/Screenshot 2024-10-03 113233.png" width="300" /></p>
+<img src="VisionCart Screenshots/Screenshot 2024-10-03 113304.png" width="300" /></p>
 
 ## Getting Started
 
