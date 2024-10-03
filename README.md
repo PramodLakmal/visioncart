@@ -10,7 +10,10 @@ A Flutter project.
 <img src="VisionCart Screenshots/Screenshot_1727935006.png" width="300" />&ensp; &ensp;
 <img src="VisionCart Screenshots/Screenshot_1727935089.png" width="300" />&ensp; &ensp;
 <img src="VisionCart Screenshots/Screenshot_1727935054.png" width="300" />&ensp; &ensp;
-<img src="VisionCart Screenshots/Screenshot_1727935081.png" width="300" /></p>
+<img src="VisionCart Screenshots/Screenshot_1727935081.png" width="300" />&ensp; &ensp;
+<img src="VisionCart Screenshots/Screenshot 2024-10-03 113205.png" width="300" />&ensp; &ensp;
+<img src="VisionCart Screenshots/Screenshot 2024-10-03 113233.png" width="300" />&ensp; &ensp;
+<img src="VisionCart Screenshots/Screenshot 2024-10-03 113233.png" width="300" /></p>
 
 ## Getting Started
 
