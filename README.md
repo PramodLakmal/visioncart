@@ -1,10 +1,10 @@
 # VisionCart
 <h3>Shopping Application for Visually Impaired</h3>
 
-A Flutter project with dart.
-Database - Firebase
-User Side - Mobile
-Admin Side - Web
+A Flutter project with dart. <br>
+DB - Firebase <br>
+User Side - Mobile <br>
+Admin Side - Web <br>
 
 <br><h3>Application UI Screenshots</h3><br>
 
