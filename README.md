@@ -1,4 +1,5 @@
-# visioncart
+# VisionCart
+#Shopping Application for Visually Impaired
 
 A new Flutter project.
 
