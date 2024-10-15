@@ -1,10 +1,19 @@
 # VisionCart
 <h3>Shopping Application for Visually Impaired</h3>
 
-A Flutter project with dart. <br>
+A Flutter project with Dart. <br>
 DB - Firebase <br>
 User Side - Mobile <br>
 Admin Side - Web <br>
+
+VisionCart is a mobile and web-based application designed to enhance the online shopping experience for visually impaired users. The project focuses on inclusivity, providing a fully voice-controlled interface for seamless navigation, integrating text-to-speech and speech-to-text functionalities for product information and interactions, and offering a product image scanning feature with recognition to identify items and suggest alternatives. Additionally, VisionCart includes a voice call system for personalized order placement, ensuring a more accessible and user-friendly shopping experience.
+
+Key Features:
+
+Fully Voice-Controlled Interface: Simplified navigation and shopping with voice commands.
+Product Image Scanning & Recognition: Easily identify products and receive suggestions from the inventory.
+Text-to-Speech (TTS) & Speech-to-Text (STT) Integration: Enhanced accessibility for visually challenged users.
+Voice Call System for Orders: Personalized order placement with real-time assistance. <br>
 
 <br><h3>Application UI Screenshots</h3><br>
 
